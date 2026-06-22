@@ -374,6 +374,27 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
   .sec{padding:84px 0}
 }
 </style>
+<script>
+/* Auth catch: if an OAuth/email login lands here (Supabase Site-URL fallback),
+   process the session and forward to the dashboard. Only runs post-login. */
+(function () {
+  if (!/[#&?](access_token|code|error)=/.test(location.hash + location.search)) return;
+  var s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+  s.onload = function () {
+    var c = document.createElement('script'); c.src = 'supabase-config.js';
+    c.onload = function () {
+      try {
+        var sb = window.supabase.createClient(window.PAYPARTY_SUPABASE_URL, window.PAYPARTY_SUPABASE_ANON_KEY,
+          { auth: { detectSessionInUrl: true, persistSession: true } });
+        sb.auth.getSession().then(function (r) { if (r.data && r.data.session) location.replace('dashboard.html'); });
+      } catch (e) {}
+    };
+    document.head.appendChild(c);
+  };
+  document.head.appendChild(s);
+})();
+</script>
 </head>
 <body>
 
