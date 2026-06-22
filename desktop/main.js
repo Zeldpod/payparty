@@ -20,13 +20,15 @@ const store = new Store({
    AdMaven integration). For local dev it falls back to the
    bundled widget.html so the app runs without deploying first.
    ------------------------------------------------------------ */
-const REMOTE_WIDGET_URL = 'https://payparty.app/widget';
+const REMOTE_WIDGET_URL = 'https://payparty.fun/widget?host=app';
 const LOCAL_WIDGET_URL = 'file://' + path.join(__dirname, 'windows', 'widget.html');
-// Set PP_WIDGET_URL=remote to test the live page once it's deployed.
+// Loads the live hosted widget (real ads on the verified domain) by default.
+// PP_WIDGET_URL=local  → bundled house-ad widget (offline dev)
+// PP_WIDGET_URL=<url>  → a custom page
 const WIDGET_URL =
-  process.env.PP_WIDGET_URL === 'remote' ? REMOTE_WIDGET_URL :
-  process.env.PP_WIDGET_URL ? process.env.PP_WIDGET_URL :
-  LOCAL_WIDGET_URL;
+  process.env.PP_WIDGET_URL === 'local' ? LOCAL_WIDGET_URL :
+  (process.env.PP_WIDGET_URL && process.env.PP_WIDGET_URL !== 'remote') ? process.env.PP_WIDGET_URL :
+  REMOTE_WIDGET_URL;
 
 const isMac = process.platform === 'darwin';
 const preload = path.join(__dirname, 'preload.js');
@@ -95,14 +97,14 @@ function createWidgetWindow() {
     return;
   }
   const wa = screen.getPrimaryDisplay().workArea;
-  const W = 380, H = 340;
+  const W = 360, H = 480;
   widgetWindow = new BrowserWindow({
     width: W,
     height: H,
     minWidth: 300,   // can't shrink it into nothing (anti-cheat: ad must stay visible)
-    minHeight: 240,
-    maxWidth: 620,
-    maxHeight: 560,
+    minHeight: 150,  // compact tier (320x50 banner) still fits
+    maxWidth: 640,
+    maxHeight: 720,
     x: wa.x + wa.width - W - 24,
     y: wa.y + wa.height - H - 24,
     frame: false,
@@ -115,13 +117,21 @@ function createWidgetWindow() {
     minimizable: false,
     fullscreenable: false,
     backgroundColor: '#00000000',
-    webPreferences: { preload, contextIsolation: true, nodeIntegration: false }
+    // NOTE: no preload here on purpose — the widget loads a remote page that
+    // runs third-party ad scripts, so it must NOT get the privileged IPC bridge.
+    webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true }
   });
   widgetWindow.setAlwaysOnTop(true, 'screen-saver');
   if (typeof widgetWindow.setVisibleOnAllWorkspaces === 'function') {
     widgetWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
   }
   widgetWindow.loadURL(WIDGET_URL);
+  // sponsor links (and any ad pop) open in the user's real browser, never as a
+  // new app window
+  widgetWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (/^https?:\/\//i.test(url)) shell.openExternal(url);
+    return { action: 'deny' };
+  });
   // keep the widget fully on screen — you can't park it off the edge to "hide" it
   widgetWindow.on('moved', clampWidget);
   widgetWindow.on('resize', clampWidget);

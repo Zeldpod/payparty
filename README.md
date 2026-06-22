@@ -7,6 +7,7 @@ Get paid to do whatever. A tiny sponsored widget that pays you while your screen
 |------|------|
 | `index.html` · `login.html` · `dashboard.html` | Marketing site, Supabase auth, account dashboard, and cash-out requests (deployed to **payparty.fun** via Vercel) |
 | `dashboard.css` · `dashboard.js` | Dashboard presentation, account activity, and payout-request UI |
+| `widget/index.html` | The earning widget served at **payparty.fun/widget** — real Adsterra ads run here (the verified domain). The desktop app and extension load this page; ad code lives ONLY here, never on the marketing pages. |
 | `supabase-config.js` | Public client config (anon key only — safe) |
 | `supabase/schema.sql` | Run once in the Supabase SQL editor |
 | `assets/` | Silk background, app icon, product art |

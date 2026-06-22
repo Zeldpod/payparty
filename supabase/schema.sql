@@ -2,6 +2,8 @@
 -- Run this entire file in: Supabase Dashboard -> SQL Editor -> New query -> Run.
 -- It is intentionally idempotent so it can also upgrade the original schema.
 
+begin;
+
 create extension if not exists pgcrypto;
 
 -- ---------------------------------------------------------------------------
@@ -14,6 +16,30 @@ create table if not exists public.profiles (
   lifetime    numeric(12,2) not null default 0 check (lifetime >= 0),
   created_at  timestamptz not null default now()
 );
+
+-- CREATE TABLE IF NOT EXISTS does not upgrade a legacy table. Some early
+-- PayParty databases only had id/balance, so add every newer profile field
+-- before triggers, backfills, or dashboard queries reference it.
+alter table public.profiles add column if not exists email text;
+alter table public.profiles add column if not exists balance numeric(12,2) default 0;
+alter table public.profiles add column if not exists lifetime numeric(12,2) default 0;
+alter table public.profiles add column if not exists created_at timestamptz default now();
+
+update public.profiles set balance = 0 where balance is null;
+update public.profiles set lifetime = 0 where lifetime is null;
+update public.profiles set created_at = now() where created_at is null;
+update public.profiles set lifetime = balance where lifetime = 0 and balance > 0;
+update public.profiles p
+set email = u.email
+from auth.users u
+where p.id = u.id and p.email is null;
+
+alter table public.profiles alter column balance set default 0;
+alter table public.profiles alter column balance set not null;
+alter table public.profiles alter column lifetime set default 0;
+alter table public.profiles alter column lifetime set not null;
+alter table public.profiles alter column created_at set default now();
+alter table public.profiles alter column created_at set not null;
 
 -- Every verified earning becomes an immutable ledger entry.
 create table if not exists public.earnings_ledger (
@@ -282,3 +308,5 @@ revoke all on public.profiles, public.earnings_ledger, public.cashouts from anon
 revoke insert, update, delete, truncate, references, trigger
   on public.profiles, public.earnings_ledger, public.cashouts from authenticated;
 grant select on public.profiles, public.earnings_ledger, public.cashouts to authenticated;
+
+commit;
