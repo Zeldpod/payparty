@@ -1,0 +1,7 @@
+# Only the web app is deployed to Vercel — keep the desktop app + extension out.
+desktop/
+extension/
+supabase/
+node_modules/
+.mcp.json
+*.log

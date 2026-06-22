@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+
+# desktop build output
+desktop/release/
+desktop/dist/
+
+# packaged binaries
+*.dmg
+*.AppImage
+*.deb
+*.exe
+*.app/
+
+# secrets — NEVER commit (service_role / sb_secret_* live in Vercel env vars only)
+.env
+.env.*
+*.pem
+*secret*
+serviceKey*
+
+# local tooling / os
+.mcp.json
+.vercel
+.DS_Store
+*.log

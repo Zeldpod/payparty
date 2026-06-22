@@ -1,0 +1,101 @@
+:root{
+  --purple:#6C4DFF; --purple-lt:#8B5CFF; --green:#00C853; --green-dk:#00a344;
+  --ink:#160d2e; --ink-faint:#cdbff5;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:transparent;overflow:hidden;
+  font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{height:100vh;padding:13px;display:flex}
+
+/* ===== glowing glass card (Figma system) ===== */
+.card{position:relative;flex:1;display:flex;flex-direction:column;border-radius:24px;overflow:hidden;color:#fff;
+  background:linear-gradient(168deg,rgba(130,97,255,.78) 0%,rgba(58,33,120,.82) 48%,rgba(16,9,36,.92) 100%);
+  backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);
+  border:1px solid rgba(255,255,255,.22);
+  box-shadow:inset 0 1px 3px rgba(255,255,255,.9),inset 0 12px 22px rgba(160,142,236,.5),inset 0 40px 60px rgba(96,64,228,.5),0 24px 54px rgba(40,20,90,.55)}
+
+/* header = drag handle */
+.head{-webkit-app-region:drag;display:flex;align-items:center;gap:8px;padding:12px 13px 6px;user-select:none;flex:none}
+.head .m{display:grid;place-items:center;width:22px;height:22px;border-radius:7px;color:#fff;font-weight:900;font-size:12px;
+  background:linear-gradient(150deg,var(--purple-lt),var(--purple));box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.head .nm{font-weight:800;font-size:13px}
+.head .live{margin-left:auto;display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:#7CFFB0}
+.head .live i{width:6px;height:6px;border-radius:50%;background:#7CFFB0;box-shadow:0 0 8px #7CFFB0;animation:pulse 1.6s infinite}
+.head .x{-webkit-app-region:no-drag;width:20px;height:20px;display:grid;place-items:center;border-radius:6px;
+  color:#d8ccff;font-size:13px;cursor:pointer;margin-left:4px}
+.head .x:hover{background:rgba(255,255,255,.16)}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+
+.tag{flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 14px}
+.tag .lab{font-size:9.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:#cbbcff;display:inline-flex;align-items:center;gap:5px}
+.tag .lab i{width:5px;height:5px;border-radius:50%;background:#cbbcff}
+.tag .rate{font-size:11px;font-weight:800;color:#7CFFB0;background:rgba(124,255,176,.14);padding:3px 9px;border-radius:99px}
+
+/* ad creative area */
+.creative{flex:1;min-height:0;margin:9px 14px 0;position:relative}
+
+/* product card (compact + standard) */
+.house{display:flex;gap:12px;align-items:center;height:100%}
+.house .info{flex:1;min-width:0}
+.house .price{font-family:'Bricolage Grotesque','Hanken Grotesk',sans-serif;font-weight:800;letter-spacing:-1.4px;line-height:1;color:#e9d7fe;text-shadow:0 2px 12px rgba(130,90,255,.55);font-size:30px}
+.house .name{font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-top:8px;opacity:.95;font-size:11px}
+.house .tile{flex:none;border-radius:18px;overflow:hidden;background:linear-gradient(180deg,#fff,#efeaff);
+  box-shadow:0 6px 16px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.9);width:92px;height:92px}
+.house .tile img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* video ad (large) */
+.video{display:none;height:100%}
+.video .vthumb{position:relative;flex:1;width:100%;height:100%;border-radius:16px;overflow:hidden;
+  background:linear-gradient(135deg,#241a52,#3a2a78 60%,#1a1030);display:flex;align-items:center;justify-content:center;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.video .vthumb::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.05) 0 12px,transparent 12px 26px)}
+.video .play{position:relative;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-size:18px;color:#3a1d8a;
+  background:rgba(255,255,255,.92);box-shadow:0 8px 22px rgba(0,0,0,.4);padding-left:4px}
+.video .vmeta{position:absolute;top:10px;left:12px;display:flex;flex-direction:column;gap:2px;font-size:10.5px;color:#e7dbff}
+.video .vmeta b{font-size:12px;color:#fff}
+.video .vbar{position:absolute;left:12px;right:12px;bottom:11px;height:4px;border-radius:99px;background:rgba(255,255,255,.25);overflow:hidden}
+.video .vbar i{display:block;height:100%;width:38%;border-radius:99px;background:linear-gradient(90deg,#1be06a,#9dffc6)}
+
+#admaven-slot{position:absolute;inset:0;display:none}
+#admaven-slot.on{display:block}
+
+/* ---- tier modifiers ---- */
+.card.tier-compact .creative{margin-top:6px}
+.card.tier-compact .house .price{font-size:21px}
+.card.tier-compact .house .name{font-size:9px;margin-top:5px}
+.card.tier-compact .house .tile{width:60px;height:60px;border-radius:14px}
+.card.tier-compact .cta{padding:9px;font-size:12px;margin-top:8px}
+.card.tier-large .house{display:none}
+.card.tier-large .video{display:flex}
+.card.tier-large .house.network-hidden,.card.tier-large .video.network-hidden{display:none}
+
+/* CTA + footer */
+.cta{-webkit-app-region:no-drag;flex:none;margin:11px 14px 0;display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px;border-radius:14px;font-weight:800;font-size:13.5px;color:#04210d;cursor:pointer;
+  background:linear-gradient(150deg,#1be06a,var(--green));box-shadow:0 8px 20px rgba(0,200,83,.4),0 1px 0 rgba(255,255,255,.5) inset;
+  border:none;transition:filter .2s,transform .15s}
+.cta:hover{filter:brightness(1.05);transform:translateY(-1px)}
+.foot{-webkit-app-region:no-drag;flex:none;display:flex;align-items:center;justify-content:space-between;padding:9px 14px 12px;font-size:11px;color:var(--ink-faint)}
+.foot .earn{font-weight:800;color:#fff}
+.foot .more{color:#cbbcff;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.foot .more:hover{color:#fff}
+
+/* resize grip (corner hint — actual resize is the window edge) */
+.grip{position:absolute;right:5px;bottom:5px;width:14px;height:14px;pointer-events:none;opacity:.55;
+  background:
+    linear-gradient(135deg,transparent 50%,rgba(255,255,255,.8) 50%) no-repeat right bottom/6px 6px,
+    linear-gradient(135deg,transparent 50%,rgba(255,255,255,.6) 50%) no-repeat right bottom/12px 12px}
+
+/* tier-up flash */
+.flash{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.9);opacity:0;pointer-events:none;
+  background:rgba(8,3,24,.78);backdrop-filter:blur(6px);border:1px solid rgba(124,255,176,.5);color:#fff;
+  padding:10px 16px;border-radius:14px;font-weight:800;font-size:13px;white-space:nowrap;text-align:center;z-index:5;
+  box-shadow:0 12px 30px rgba(0,0,0,.4)}
+.flash b{color:#7CFFB0}
+.flash.show{animation:flash 1.6s ease}
+@keyframes flash{0%{opacity:0;transform:translate(-50%,-50%) scale(.85)}15%,70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}
+
+/* coin pop */
+.coin{position:absolute;left:50%;top:46px;transform:translateX(-50%);font-weight:900;font-size:15px;color:#7CFFB0;
+  text-shadow:0 2px 8px rgba(0,0,0,.4);opacity:0;pointer-events:none;z-index:6}
+@keyframes coin{0%{opacity:0;transform:translate(-50%,0) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(-50%,-46px) scale(1.1)}}

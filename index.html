@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PayParty — Get paid to do nothing</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="PayParty is a tiny floating widget for your desktop. It pays you real money while you game, watch, study, or work. Your screen. Your rules. Free money.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Monda:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   PAYPARTY — design tokens (light · purple · glassy · chaos)
+   ============================================================ */
+:root{
+  /* color */
+  --ink:#160d2e;            /* near-black PURPLE for text (not a dark bg) */
+  --ink-soft:#5a5170;       /* muted body text */
+  --ink-faint:#8b83a3;      /* captions */
+  --bg:#ffffff;             /* page is WHITE */
+  --bg-lav:#f6f3ff;         /* lavender wash */
+  --bg-lav-2:#efe9ff;       /* deeper lavender */
+  --purple:#6C4DFF;         /* brand */
+  --purple-lt:#8B5CFF;      /* brand light */
+  --purple-dk:#5A35FF;      /* brand deep (text accents) */
+  --violet:#B8A7FF;         /* tint */
+  --green:#00C853;          /* MONEY only */
+  --green-dk:#00a344;
+  --pop-pink:#FF4D8D;       /* chaos accent */
+  --pop-yellow:#FFC93C;     /* chaos accent */
+  --pop-cyan:#19D3FF;       /* chaos accent */
+  /* glass */
+  --glass:rgba(255,255,255,.62);
+  --glass-strong:rgba(255,255,255,.82);
+  --glass-brd:rgba(108,77,255,.16);
+  --glass-brd-strong:rgba(108,77,255,.28);
+  /* radius scale */
+  --r-sm:12px; --r-md:18px; --r-lg:26px; --r-xl:34px; --r-pill:999px;
+  /* shadow scale (purple-tinted) */
+  --sh-1:0 2px 8px rgba(108,77,255,.10);
+  --sh-2:0 14px 34px rgba(108,77,255,.16);
+  --sh-3:0 30px 70px rgba(60,37,150,.22);
+  --sh-glow:0 16px 44px rgba(108,77,255,.45),0 1px 0 rgba(255,255,255,.7) inset;
+  /* space scale (8pt) */
+  --s-1:8px; --s-2:16px; --s-3:24px; --s-4:32px; --s-6:48px; --s-8:64px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--ink);overflow-x:hidden;
+  font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--purple);color:#fff}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.disp{font-family:'Bricolage Grotesque',sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.eyebrow{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--purple)}
+.grad-text{background:linear-gradient(100deg,var(--purple-lt),var(--purple-dk));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.rotor{white-space:nowrap}
+.caret{display:inline-block;width:.05em;height:.74em;margin-left:.07em;border-radius:3px;background:var(--purple-dk);vertical-align:-.03em;animation:pp-blink 1.05s steps(1,end) infinite}
+@keyframes pp-blink{0%,50%{opacity:1}50.01%,100%{opacity:0}}
+
+/* ---- buttons ---- */
+.btn{display:inline-flex;align-items:center;gap:10px;font-weight:800;border:none;cursor:pointer;font-family:inherit;
+  border-radius:var(--r-md);transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .25s ease;will-change:transform}
+.btn:active{transform:scale(.97)}
+.btn-lg{font-size:17px;padding:17px 30px}
+.btn-purple{color:#fff;background:linear-gradient(150deg,var(--purple-lt),var(--purple));box-shadow:var(--sh-glow)}
+.btn-purple:hover{box-shadow:0 22px 56px rgba(108,77,255,.55),0 1px 0 rgba(255,255,255,.7) inset;transform:translateY(-2px)}
+/* glossy-glass Apple-style download button (Cluely vibe) */
+.btn-mac{position:relative;overflow:hidden;color:#fff;border:1px solid rgba(255,255,255,.32);
+  background:linear-gradient(180deg,#a488ff 0%,#7c57ff 46%,#5e34f0 100%);
+  box-shadow:0 1px 0 rgba(255,255,255,.55) inset,0 -13px 22px rgba(52,24,128,.45) inset,0 12px 30px rgba(108,77,255,.55),0 2px 5px rgba(40,20,90,.22);
+  transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .3s ease,filter .3s ease}
+.btn-mac>span{position:relative;z-index:2}
+.btn-mac::before{content:"";position:absolute;inset:0 0 50% 0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,0))}
+.btn-mac::after{content:"";position:absolute;top:0;bottom:0;left:-70%;width:48%;pointer-events:none;transform:skewX(-18deg);
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.65),transparent);transition:left .65s cubic-bezier(.4,0,.2,1)}
+.btn-mac:hover{transform:translateY(-2px);filter:brightness(1.08) saturate(1.05);
+  box-shadow:0 1px 0 rgba(255,255,255,.62) inset,0 -13px 24px rgba(52,24,128,.5) inset,0 20px 46px rgba(108,77,255,.72),0 3px 7px rgba(40,20,90,.24)}
+.btn-mac:hover::after{left:120%}
+.btn-mac:active{transform:translateY(0) scale(.985)}
+.btn-green{color:#04210d;background:linear-gradient(150deg,#1be06a,var(--green));box-shadow:0 14px 34px rgba(0,200,83,.4),0 1px 0 rgba(255,255,255,.6) inset}
+.btn-green:hover{transform:translateY(-2px);box-shadow:0 20px 46px rgba(0,200,83,.5),0 1px 0 rgba(255,255,255,.6) inset}
+.btn-ghost{color:var(--ink);background:var(--glass-strong);border:1px solid var(--glass-brd);backdrop-filter:blur(14px);box-shadow:var(--sh-1)}
+.btn-ghost:hover{transform:translateY(-2px);border-color:var(--glass-brd-strong)}
+
+/* ---- sticker (chaos) ---- */
+.sticker{display:inline-flex;align-items:center;gap:7px;font-weight:800;font-size:13.5px;
+  padding:8px 14px;border-radius:var(--r-pill);background:#fff;color:var(--ink);
+  border:2px solid var(--ink);box-shadow:4px 4px 0 rgba(22,13,46,.9);transform:rotate(-3deg)}
+.sticker.pink{background:var(--pop-pink);color:#fff;border-color:#c81f5f;box-shadow:4px 4px 0 #a01049}
+.sticker.yellow{background:var(--pop-yellow);color:#3a2c00;border-color:#caa01a;box-shadow:4px 4px 0 #a37f0a}
+.sticker.green{background:var(--green);color:#04210d;border-color:#0a9c45;box-shadow:4px 4px 0 #057a34}
+.sticker.purple{background:var(--purple);color:#fff;border-color:#4a2fd6;box-shadow:4px 4px 0 #3a23ad}
+
+/* ---- glass card ---- */
+.glass{background:var(--glass);backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);
+  border:1px solid rgba(255,255,255,.7);box-shadow:var(--sh-2),0 1px 0 rgba(255,255,255,.9) inset;border-radius:var(--r-lg)}
+
+/* ---- reveal ---- */
+[data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+[data-reveal].in{opacity:1;transform:none}
+
+/* ============================================================
+   keyframes
+   ============================================================ */
+@keyframes pp-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes pp-floatslow{0%,100%{transform:translateY(0) rotate(-.5deg)}50%{transform:translateY(-16px) rotate(.5deg)}}
+@keyframes pp-pulse{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:1;transform:scale(1.35)}}
+@keyframes pp-sheen{0%{transform:translateX(-120%)}60%,100%{transform:translateX(240%)}}
+@keyframes pp-marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes pp-marquee-rev{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
+@keyframes pp-spin{to{transform:rotate(360deg)}}
+@keyframes pp-wob{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes pp-coin{0%{opacity:0;transform:translate(-50%,0) scale(.5)}15%{opacity:1}100%{opacity:0;transform:translate(-50%,-90px) scale(1.1)}}
+@keyframes pp-rainfall{0%{transform:translateY(-10vh) rotate(0)}100%{transform:translateY(110vh) rotate(320deg)}}
+@keyframes pp-bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-7px) rotate(2deg)}}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}[data-reveal]{opacity:1;transform:none}}
+
+/* ============================================================
+   NAV  (clean full-width — no floating pill)
+   ============================================================ */
+nav.bar{position:fixed;top:0;left:0;right:0;z-index:300;transition:background .35s ease,box-shadow .35s ease}
+nav.bar .navwrap{display:flex;align-items:center;gap:16px;height:74px;max-width:1240px;margin:0 auto;padding:0 28px}
+nav.bar.scrolled{background:rgba(255,255,255,.72);backdrop-filter:blur(20px) saturate(1.6);-webkit-backdrop-filter:blur(20px) saturate(1.6);
+  box-shadow:0 1px 0 rgba(108,77,255,.1),0 10px 34px rgba(108,77,255,.08)}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800}
+.brand .mark{display:grid;place-items:center;width:36px;height:36px;border-radius:11px;color:#fff;font-weight:900;font-size:20px;
+  background:linear-gradient(150deg,var(--purple-lt),var(--purple));box-shadow:0 6px 16px rgba(108,77,255,.5),0 1px 0 rgba(255,255,255,.5) inset}
+.brand .name{font-family:'Bricolage Grotesque',sans-serif;font-size:21px;letter-spacing:-.02em}
+.navlinks{display:flex;gap:4px;margin:0 auto}
+.nav-link{color:var(--ink-soft);font-size:14.5px;font-weight:600;padding:9px 14px;border-radius:12px;transition:color .2s,background .2s}
+.nav-link:hover{color:var(--purple);background:rgba(108,77,255,.08)}
+.navright{display:flex;align-items:center;gap:10px}
+.nav-login{font-weight:700;font-size:14px;color:var(--ink);padding:10px 18px;border-radius:13px;border:1px solid var(--glass-brd);background:rgba(255,255,255,.7);transition:border-color .2s,transform .15s}
+.nav-login:hover{border-color:var(--glass-brd-strong);transform:translateY(-1px)}
+.btn-sm{font-size:14px;padding:11px 18px;border-radius:13px}
+@media(max-width:880px){.navlinks{display:none}}
+@media(max-width:560px){.nav-login{display:none}nav.bar .navwrap{padding:0 18px;height:66px}}
+
+/* ============================================================
+   HERO  (two-column: copy left, MacBook right)
+   ============================================================ */
+header.hero{position:relative;min-height:100vh;padding:120px 0 70px;overflow:hidden;display:flex;align-items:center}
+.hero-bg{position:absolute;inset:0;z-index:0;background:#fff;overflow:hidden}
+.hero-bg canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-veil{position:absolute;inset:0;background:
+  linear-gradient(180deg,rgba(255,255,255,.6) 0%,rgba(255,255,255,.18) 16%,rgba(255,255,255,0) 38%),
+  radial-gradient(66% 62% at 24% 46%,rgba(255,255,255,.9),rgba(255,255,255,0) 70%),
+  linear-gradient(180deg,rgba(255,255,255,0) 60%,rgba(255,255,255,.88) 90%,#fff 100%)}
+.cursorglow{position:absolute;width:520px;height:520px;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;opacity:0;
+  background:radial-gradient(circle,rgba(139,92,255,.30),rgba(139,92,255,0) 65%);transition:opacity .5s ease;mix-blend-mode:multiply}
+header.hero>.wrap{max-width:1320px}
+.hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:.88fr 1.12fr;gap:44px;align-items:center;width:100%}
+.hero-copy{text-align:left}
+.hero h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(44px,6.2vw,90px);line-height:.9;
+  letter-spacing:-.045em;margin:20px 0 0;text-wrap:balance}
+.hero .sub{margin:24px 0 0;max-width:46ch;font-size:clamp(16px,1.55vw,19px);line-height:1.55;color:var(--ink-soft);font-weight:500;text-wrap:pretty}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:14px;justify-content:flex-start;margin-top:32px}
+.hero-trust{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:26px}
+.hero-trust .t{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--ink-soft)}
+.hero-trust .t svg{color:var(--purple);flex:none}
+
+/* ---- MacBook (real product image) ---- */
+.laptop{position:relative;width:100%;max-width:800px;margin:0 0 0 auto;animation:pp-floatslow 11s ease-in-out infinite}
+.laptop::before{content:"";position:absolute;inset:-7% -5% -4%;z-index:0;filter:blur(12px);
+  background:radial-gradient(60% 56% at 50% 46%,rgba(255,255,255,.95),rgba(255,255,255,0) 73%)}
+.laptop .ambient{position:absolute;inset:-14% -10% -20%;z-index:0;filter:blur(48px);border-radius:50%;
+  background:radial-gradient(60% 60% at 62% 38%,rgba(139,92,255,.42),transparent 70%),radial-gradient(52% 52% at 28% 72%,rgba(25,211,255,.28),transparent 70%)}
+.laptop-img{position:relative;z-index:1;width:100%;height:auto;display:block}
+/* live widget overlay — anchored to the screen glass of macbook-clean.png */
+.glass-area{position:absolute;z-index:2;left:10.6%;top:3.5%;width:80.2%;height:79.7%;overflow:hidden;border-radius:3px;touch-action:none}
+.lid{position:relative;z-index:1;background:linear-gradient(180deg,#15151b,#0b0b0f);border-radius:20px 20px 7px 7px;padding:11px;
+  box-shadow:0 44px 90px rgba(60,37,150,.3),0 0 0 1px rgba(0,0,0,.55),0 2px 0 rgba(255,255,255,.18) inset}
+.notch{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:128px;height:17px;background:#0b0b0f;border-radius:0 0 11px 11px;z-index:6}
+.screen{position:relative;border-radius:9px;overflow:hidden;aspect-ratio:16/10.2;touch-action:none;
+  background:
+    radial-gradient(45% 38% at 24% 20%,rgba(255,255,255,.95),transparent 60%),
+    radial-gradient(40% 34% at 82% 26%,rgba(255,255,255,.8),transparent 62%),
+    radial-gradient(70% 60% at 60% 92%,rgba(120,92,255,.55),transparent 72%),
+    radial-gradient(60% 50% at 12% 80%,rgba(150,120,255,.45),transparent 70%),
+    linear-gradient(170deg,#c7b6ff 0%,#b6c4ff 48%,#d2bfff 100%)}
+.cloud{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.9),rgba(255,255,255,0) 70%);filter:blur(8px);pointer-events:none}
+.menubar{position:absolute;top:0;left:0;right:0;height:23px;display:flex;align-items:center;gap:13px;padding:0 11px;z-index:4;
+  font-size:10.5px;font-weight:600;color:rgba(24,12,48,.82);background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,0))}
+.menubar .r{margin-left:auto;display:flex;align-items:center;gap:9px;font-weight:600}
+.dock{position:absolute;left:50%;bottom:9px;transform:translateX(-50%);display:flex;align-items:flex-end;gap:7px;padding:6px 9px;z-index:4;
+  border-radius:15px;background:rgba(255,255,255,.34);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.55);box-shadow:0 8px 22px rgba(40,20,90,.22)}
+.dock .app{width:30px;height:30px;border-radius:8px;box-shadow:0 3px 7px rgba(0,0,0,.18);display:grid;place-items:center;color:#fff;font-size:14px;font-weight:800;transition:transform .18s}
+.dock .app:hover{transform:translateY(-7px) scale(1.08)}
+.deck{position:relative;z-index:1;height:15px;margin:0 -3.4%;border-radius:0 0 13px 13px;
+  background:linear-gradient(180deg,#e3e6ec 0%,#c2c7d2 42%,#a7adba 100%);box-shadow:0 18px 30px rgba(40,20,90,.22)}
+.deck::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(180deg,#7f8593,#b0b5c2)}
+.deck::after{content:"";position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:86px;height:5px;border-radius:0 0 7px 7px;background:#9398a6}
+
+/* ---- GLOWING GLASS AD CARD (from Figma) — draggable ---- */
+.adcard{position:absolute;right:12px;top:24px;width:min(256px,60%);z-index:5;border-radius:24px;overflow:hidden;cursor:grab;user-select:none;
+  background:linear-gradient(168deg,rgba(130,97,255,.62) 0%,rgba(58,33,120,.72) 48%,rgba(16,9,36,.9) 100%);
+  backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);
+  border:1px solid rgba(255,255,255,.22);
+  box-shadow:inset 0 1px 3px rgba(255,255,255,.9),inset 0 10px 20px rgba(160,142,236,.5),inset 0 34px 54px rgba(96,64,228,.55),0 24px 54px rgba(60,37,150,.55);
+  animation:pp-float 5.5s ease-in-out infinite;will-change:left,top;transition:box-shadow .3s ease}
+.adcard.grabbed{animation:none}
+.adcard:active{cursor:grabbing}
+.adcard:hover{box-shadow:inset 0 1px 3px rgba(255,255,255,.95),inset 0 10px 22px rgba(170,150,245,.55),inset 0 34px 58px rgba(110,75,240,.62),0 30px 66px rgba(88,59,220,.66)}
+.ad-inner{position:relative;z-index:2;display:flex;align-items:center;gap:12px;padding:15px 15px 15px 17px}
+.ad-left{flex:1;min-width:0}
+.ad-price{font-family:'Monda',sans-serif;font-weight:700;font-size:29px;letter-spacing:-1.4px;line-height:1;color:#e9d7fe;text-shadow:0 2px 12px rgba(130,90,255,.55)}
+.ad-name{font-family:'Monda',sans-serif;font-weight:600;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:#fff;margin-top:9px;opacity:.96}
+.ad-cta{font-family:'Monda',sans-serif;font-weight:700;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#fff;margin-top:14px;
+  padding:7px 16px;border-radius:40px;border:2px solid rgba(255,255,255,.92);background:transparent;cursor:pointer;transition:background .2s,color .2s}
+.ad-cta:hover{background:#fff;color:#4321a0}
+.ad-right{flex:none;display:flex;flex-direction:column;align-items:center;gap:7px}
+.ad-tile{width:86px;height:86px;border-radius:18px;overflow:hidden;background:linear-gradient(180deg,#fff,#efeaff);
+  box-shadow:0 4px 12px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.9)}
+.ad-tile img{width:100%;height:100%;object-fit:cover;display:block}
+.ad-sponsored{font-family:'Monda',sans-serif;font-weight:600;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.85)}
+.draghint{position:absolute;left:50%;transform:translateX(-50%);bottom:-30px;white-space:nowrap;font-size:11px;font-weight:700;color:var(--purple);
+  background:#fff;padding:5px 11px;border-radius:99px;box-shadow:var(--sh-1);z-index:6;transition:opacity .4s ease;animation:pp-bob 2.4s ease-in-out infinite}
+.coin{position:absolute;left:50%;font-weight:900;font-size:15px;color:var(--green-dk);text-shadow:0 2px 6px rgba(255,255,255,.6);opacity:0;pointer-events:none;z-index:6}
+
+/* ============================================================
+   marquee trust strip
+   ============================================================ */
+.strip{background:var(--bg-lav);padding:22px 0;border-top:1px solid var(--glass-brd);border-bottom:1px solid var(--glass-brd);overflow:hidden}
+.strip .row{display:flex;width:max-content;animation:pp-marquee 32s linear infinite}
+.strip .row .grp{display:flex;align-items:center;gap:40px;padding-right:40px;white-space:nowrap}
+.strip .chip{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:15px;color:var(--ink-soft)}
+.strip .chip svg{color:var(--purple)}
+
+/* ============================================================
+   generic section
+   ============================================================ */
+section{position:relative}
+.sec{padding:120px 0}
+.sec-lav{background:linear-gradient(180deg,#fff,var(--bg-lav) 40%,#fff)}
+.head{text-align:center;max-width:720px;margin:0 auto}
+.head h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(36px,5.6vw,66px);line-height:.96;letter-spacing:-.035em;margin-top:14px}
+.head p{margin-top:16px;font-size:18px;color:var(--ink-soft);line-height:1.5}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:54px}
+.step{position:relative;padding:34px;background:#fff;border:1px solid var(--glass-brd);border-radius:var(--r-lg);box-shadow:var(--sh-2);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}
+.step:hover{transform:translateY(-6px) rotate(-.6deg);box-shadow:var(--sh-3)}
+.step .ic{width:54px;height:54px;display:grid;place-items:center;border-radius:16px;color:#fff;background:linear-gradient(150deg,var(--purple-lt),var(--purple));box-shadow:0 10px 22px rgba(108,77,255,.4)}
+.step.green .ic{background:linear-gradient(150deg,#1be06a,var(--green));box-shadow:0 10px 22px rgba(0,200,83,.35)}
+.step .n{position:absolute;top:26px;right:30px;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:60px;line-height:1;color:rgba(108,77,255,.1)}
+.step h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:23px;margin-top:20px;letter-spacing:-.01em}
+.step p{margin-top:10px;font-size:15.5px;line-height:1.55;color:var(--ink-soft)}
+
+/* safety grid (trust) */
+.safe{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:50px}
+.safe .it{padding:26px;background:#fff;border:1px solid var(--glass-brd);border-radius:var(--r-md);box-shadow:var(--sh-1);text-align:center}
+.safe .it .ic{width:48px;height:48px;margin:0 auto;display:grid;place-items:center;border-radius:14px;color:var(--green-dk);background:#e7fbef}
+.safe .it h4{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:18px;margin-top:14px}
+.safe .it p{margin-top:7px;font-size:14px;color:var(--ink-soft);line-height:1.5}
+.howmoney{margin-top:26px;text-align:center;font-size:15px;color:var(--ink-soft);max-width:640px;margin-left:auto;margin-right:auto}
+.howmoney b{color:var(--ink)}
+
+/* bento earn grid */
+.bento{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:18px;margin-top:50px}
+.cell{position:relative;overflow:hidden;border-radius:var(--r-lg);padding:28px;background:#fff;border:1px solid var(--glass-brd);box-shadow:var(--sh-2);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}
+.cell:hover{transform:translateY(-6px) rotate(.5deg);box-shadow:var(--sh-3)}
+.cell.feature{grid-row:span 2;color:#fff;border:none;background:linear-gradient(160deg,var(--purple-lt),var(--purple-dk));box-shadow:0 28px 64px rgba(90,53,255,.4)}
+.cell.feature .blob{position:absolute;top:-30%;right:-20%;width:72%;height:72%;border-radius:50%;filter:blur(34px);background:radial-gradient(circle,rgba(255,255,255,.5),transparent 70%)}
+.cell .ic{width:50px;height:50px;display:grid;place-items:center;border-radius:14px;background:var(--bg-lav);color:var(--purple)}
+.cell.feature .ic{background:rgba(255,255,255,.2);color:#fff}
+.cell h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;margin-top:16px;letter-spacing:-.01em}
+.cell.feature h3{font-size:30px}
+.cell h3{font-size:21px}
+.cell p{margin-top:8px;font-size:14.5px;line-height:1.5;color:var(--ink-soft)}
+.cell.feature p{color:#e7dfff;font-size:16px;max-width:26ch}
+.rate{display:inline-flex;align-items:center;gap:7px;margin-top:18px;padding:8px 14px;border-radius:var(--r-pill);font-weight:800;font-size:13px;
+  background:#e7fbef;color:var(--green-dk)}
+.cell.feature .rate{background:rgba(255,255,255,.18);color:#fff}
+
+/* control */
+.control-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.panel{position:relative;border-radius:var(--r-lg);padding:22px;background:linear-gradient(165deg,rgba(255,255,255,.85),rgba(246,243,255,.7));
+  border:1px solid var(--glass-brd);box-shadow:var(--sh-3),0 1px 0 rgba(255,255,255,.9) inset;backdrop-filter:blur(20px)}
+.panel .ph{display:flex;align-items:center;gap:9px;padding-bottom:16px;border-bottom:1px solid var(--glass-brd)}
+.panel .ph .m{display:grid;place-items:center;width:26px;height:26px;border-radius:9px;color:#fff;font-weight:900;font-size:14px;background:linear-gradient(150deg,var(--purple-lt),var(--purple))}
+.prow{display:flex;align-items:center;justify-content:space-between;padding:14px 15px;border-radius:14px;background:#fff;border:1px solid var(--glass-brd);margin-top:12px}
+.prow .v{font-size:13px;color:var(--purple);font-weight:700}
+.toggle{width:44px;height:25px;border-radius:99px;background:linear-gradient(90deg,var(--purple),var(--purple-lt));position:relative;box-shadow:0 0 12px rgba(108,77,255,.4)}
+.toggle i{position:absolute;right:3px;top:3px;width:19px;height:19px;border-radius:50%;background:#fff}
+.live{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700}
+.live .d{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pp-pulse 1.6s ease-in-out infinite}
+.ctrls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:26px}
+.ctrl{display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:14px;background:#fff;border:1px solid var(--glass-brd);font-weight:600;font-size:14.5px;box-shadow:var(--sh-1)}
+.ctrl svg{color:var(--purple);flex:none}
+.ctrl.g svg{color:var(--green-dk)}
+
+/* money */
+.money-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.payout{position:relative;border-radius:var(--r-lg);padding:28px;color:#fff;background:linear-gradient(165deg,#1c123f,#140d30);box-shadow:0 30px 70px rgba(40,20,90,.35)}
+.payout .floor{position:absolute;left:50%;bottom:-20px;transform:translateX(-50%);width:78%;height:70px;filter:blur(30px);background:radial-gradient(ellipse,rgba(0,200,83,.4),transparent 70%)}
+.payout .lab{font-size:13px;color:#a79ec9}
+.payout .bal{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:56px;letter-spacing:-.03em;margin-top:4px;color:#1bff7a;text-shadow:0 0 30px rgba(0,200,83,.4)}
+.payout .min{margin-top:6px;font-size:13px;color:#8b82ad}
+.payout .recent{margin-top:22px;border-top:1px solid rgba(255,255,255,.12);padding-top:16px}
+.payout .recent .t{font-size:12px;color:#8b82ad;margin-bottom:11px}
+.prec{display:flex;align-items:center;justify-content:space-between;font-size:14px;padding:5px 0}
+.prec .who{color:#d6cfea}
+.prec .amt{color:#1bff7a;font-weight:800}
+.paychips{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.paychip{display:flex;align-items:center;gap:8px;padding:11px 16px;border-radius:13px;background:#fff;border:1px solid var(--glass-brd);font-weight:700;font-size:14px;box-shadow:var(--sh-1)}
+.paychip.cash{background:#e7fbef;border-color:rgba(0,200,83,.3);color:var(--green-dk)}
+
+/* big counter */
+.bigcard{position:relative;overflow:hidden;border-radius:var(--r-xl);max-width:1120px;margin:0 auto;padding:84px 40px;text-align:center;color:#fff;
+  background:linear-gradient(150deg,var(--purple-lt),var(--purple-dk));box-shadow:0 40px 90px rgba(90,53,255,.4)}
+.bigcard .b1{position:absolute;top:-30%;left:-8%;width:50%;height:90%;border-radius:50%;filter:blur(50px);background:radial-gradient(circle,rgba(255,255,255,.4),transparent 70%)}
+.bigcard .b2{position:absolute;bottom:-40%;right:-5%;width:55%;height:100%;border-radius:50%;filter:blur(55px);background:radial-gradient(circle,rgba(25,211,255,.4),transparent 70%)}
+.bigcard .lab{position:relative;font-size:14px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#eadfff}
+.bignum{position:relative;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(56px,12vw,140px);line-height:.95;letter-spacing:-.03em;margin-top:14px}
+.bigcard .note{position:relative;margin:18px auto 0;font-size:17px;color:#eadfff;max-width:42ch}
+
+/* faq */
+.faq{max-width:820px;margin:48px auto 0;display:flex;flex-direction:column;gap:12px}
+.qa{border:1px solid var(--glass-brd);border-radius:var(--r-md);background:#fff;overflow:hidden;box-shadow:var(--sh-1)}
+.qa button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 22px;background:none;border:none;cursor:pointer;
+  font-family:inherit;font-weight:700;font-size:17px;color:var(--ink);text-align:left}
+.qa .ans{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.qa .ans p{padding:0 22px 20px;color:var(--ink-soft);font-size:15.5px;line-height:1.6}
+.qa .pl{flex:none;width:26px;height:26px;display:grid;place-items:center;border-radius:8px;background:var(--bg-lav);color:var(--purple);font-weight:800;transition:transform .3s}
+.qa.open .pl{transform:rotate(45deg)}
+
+/* final cta */
+.final{padding:130px 0 70px;text-align:center;position:relative;overflow:hidden;background:linear-gradient(180deg,#fff,var(--bg-lav))}
+.final h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(42px,7.6vw,98px);line-height:.92;letter-spacing:-.04em;text-wrap:balance;max-width:16ch;margin:0 auto}
+.final .sub{margin:24px auto 0;max-width:46ch;font-size:18px;color:var(--ink-soft);line-height:1.5}
+.final .glow{position:absolute;left:50%;top:30%;transform:translateX(-50%);width:680px;height:380px;border-radius:50%;filter:blur(60px);pointer-events:none;
+  background:radial-gradient(circle,rgba(108,77,255,.3),transparent 68%)}
+
+/* footer */
+footer{padding:40px 0 60px;background:var(--bg-lav)}
+.foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;padding-top:30px;border-top:1px solid var(--glass-brd)}
+.foot .links{display:flex;gap:22px;font-size:14px;color:var(--ink-soft);font-weight:600}
+.foot .links a:hover{color:var(--purple)}
+.foot .cr{font-size:13px;color:var(--ink-faint)}
+
+/* coin rain layer */
+.rain{position:fixed;inset:0;pointer-events:none;z-index:400;overflow:hidden}
+.rain b{position:absolute;top:0;font-size:26px;animation:pp-rainfall linear forwards}
+
+@media(max-width:960px){
+  header.hero{min-height:0;padding:106px 0 56px;display:block}
+  .hero-grid{grid-template-columns:1fr;gap:36px}
+  .hero-copy{text-align:center}
+  .hero-copy>div{justify-content:center}
+  .hero h1{margin:18px auto 0;font-size:clamp(42px,9vw,74px)}
+  .hero .sub{margin:22px auto 0}
+  .laptop{margin:0 auto;max-width:560px}
+}
+@media(max-width:860px){
+  .steps,.safe,.bento{grid-template-columns:1fr 1fr}
+  .control-grid,.money-grid{grid-template-columns:1fr}
+  .cell.feature{grid-row:auto}
+}
+@media(max-width:560px){
+  .steps,.safe,.bento{grid-template-columns:1fr}
+  .sec{padding:84px 0}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="bar" id="nav">
+  <div class="navwrap">
+    <a href="#top" class="brand"><span class="mark">P</span><span class="name">PayParty</span></a>
+    <div class="navlinks">
+      <a href="#how" class="nav-link">How it works</a>
+      <a href="#earn" class="nav-link">Ways to earn</a>
+      <a href="#safe" class="nav-link">Is it safe?</a>
+      <a href="#money" class="nav-link">Payouts</a>
+      <a href="#faq" class="nav-link">FAQ</a>
+    </div>
+    <div class="navright">
+      <a href="login.html" class="nav-login">Log in</a>
+      <a href="#download" class="btn btn-mac btn-sm" data-magnetic data-rain data-os-btn>
+        <span data-os-icon></span><span data-os-label>Get for Mac</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<header class="hero" id="top">
+  <div class="hero-bg">
+    <canvas data-silk></canvas>
+    <div class="cursorglow" data-glow></div>
+    <div class="hero-veil"></div>
+  </div>
+  <div class="wrap hero-grid">
+
+    <!-- LEFT: copy -->
+    <div class="hero-copy">
+      <div data-reveal style="display:flex;gap:10px;flex-wrap:wrap">
+        <span class="sticker pink" style="animation:pp-wob 5s ease-in-out infinite">💸 literally free money</span>
+        <span class="sticker" style="transform:rotate(2deg)">⚡ Cash App for screen space</span>
+      </div>
+
+      <h1 data-reveal>Get paid to<br><span class="rotor"><span class="grad-text" data-type>do anything.</span><span class="caret" aria-hidden="true"></span></span></h1>
+
+      <p class="sub" data-reveal>Drop a tiny glassy widget on your desktop. It quietly earns
+        <b style="color:var(--green-dk)">real cash</b> while you game, watch Netflix, study, or work.
+        You're already on your screen — might as well get paid for it. 🤷</p>
+
+      <div class="hero-ctas" data-reveal>
+        <a href="#download" class="btn btn-lg btn-mac" data-magnetic data-rain data-os-btn>
+          <span data-os-icon><svg width="18" height="18" viewBox="0 0 384 512" fill="#fff"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg></span>
+          <span data-os-label>Get for Mac</span>
+        </a>
+        <a href="#download" class="btn btn-lg btn-ghost" id="get-ext">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/></svg> Get extension
+        </a>
+      </div>
+
+      <div class="hero-trust" data-reveal>
+        <span class="t"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V6l8-3 8 3z"/><path d="m9 12 2 2 4-4"/></svg>No screen recording</span>
+        <span class="t"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>No keystroke tracking</span>
+        <span class="t"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>Pause anytime</span>
+      </div>
+    </div>
+
+    <!-- RIGHT: real MacBook + LIVE draggable widget overlay -->
+    <div data-reveal>
+      <div class="laptop">
+        <div class="ambient"></div>
+        <img class="laptop-img" src="assets/macbook-clean.png" alt="PayParty running on a MacBook" draggable="false">
+        <!-- overlay sits exactly on the screen glass -->
+        <div class="glass-area" data-screen>
+          <!-- glowing glass ad card (Figma: Glowing glassy cards) -->
+          <div class="adcard" data-widget data-draghandle>
+            <div class="ad-inner">
+              <div class="ad-left">
+                <div class="ad-price">$249.99</div>
+                <div class="ad-name">AirPods Pro 3</div>
+                <button class="ad-cta">Checkout</button>
+              </div>
+              <div class="ad-right">
+                <div class="ad-tile"><img src="assets/airpods.png" alt="AirPods Pro 3" draggable="false"></div>
+                <div class="ad-sponsored">Sponsored</div>
+              </div>
+            </div>
+          </div>
+          <div class="draghint" data-draghint style="bottom:10px">✥ drag me anywhere</div>
+          <div class="coin" data-coin>+$0.04</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<!-- ===== TRUST STRIP ===== -->
+<section class="strip">
+  <div class="row" data-strip><div class="grp" data-grp></div><div class="grp" data-grp></div></div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="sec sec-lav" id="how">
+  <div class="wrap">
+    <div class="head" data-reveal>
+      <div class="eyebrow">stupidly simple</div>
+      <h2>Three taps. Then it just<br><span class="grad-text">prints money.</span></h2>
+      <p>No weird setup. No points. No credit card. No reason not to.</p>
+    </div>
+    <div class="steps">
+      <div class="step" data-reveal data-tilt>
+        <span class="n">1</span>
+        <div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></div>
+        <h3>Download PayParty</h3>
+        <p>Install the desktop app in seconds. A tiny glassy widget pops up, ready to go.</p>
+      </div>
+      <div class="step" data-reveal data-tilt>
+        <span class="n">2</span>
+        <div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9l-3 3 3 3"/><path d="M9 5l3-3 3 3"/><path d="M15 19l-3 3-3-3"/><path d="M19 9l3 3-3 3"/><path d="M2 12h20"/><path d="M12 2v20"/></svg></div>
+        <h3>Drag it anywhere</h3>
+        <p>Drop it in any corner, resize it tiny → big, and pick exactly when it runs.</p>
+      </div>
+      <div class="step green" data-reveal data-tilt>
+        <span class="n" style="color:rgba(0,200,83,.14)">3</span>
+        <div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <h3>Get paid. AFK.</h3>
+        <p>Sponsored cards run quietly while your screen's on. Cash out the second you hit $5.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WAYS TO EARN ===== -->
+<section class="sec" id="earn">
+  <div class="wrap">
+    <div class="head" data-reveal>
+      <div class="eyebrow">the fun part</div>
+      <h2>Earn doing what you<br>already do <span class="grad-text">all day.</span></h2>
+      <p>The widget floats on top no matter what app you're in. So the bag never stops. 💼</p>
+    </div>
+    <div class="bento">
+      <div class="cell feature" data-reveal data-tilt>
+        <div class="blob"></div>
+        <div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h4M8 10v4"/><circle cx="15" cy="11" r="1"/><circle cx="18" cy="13" r="1"/><rect x="2" y="6" width="20" height="12" rx="4"/></svg></div>
+        <h3>Gaming 🎮</h3>
+        <p>Ranked grind, side income ON. The widget chills in the corner and keeps banking while you cook.</p>
+        <div class="rate">📈 avg. $0.03/min</div>
+      </div>
+      <div class="cell" data-reveal data-tilt>
+        <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="3"/><path d="m10 9 4 2.5L10 14z" fill="currentColor"/></svg></div>
+        <h3>Watching stuff 📺</h3>
+        <p>Your watch-later list now has a side hustle.</p>
+      </div>
+      <div class="cell" data-reveal data-tilt>
+        <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h11v16H6a2 2 0 0 0-2 2z"/><path d="M17 3h2a1 1 0 0 1 1 1v15"/></svg></div>
+        <h3>Studying 📚</h3>
+        <p>Homework, but slightly less broke.</p>
+      </div>
+      <div class="cell" data-reveal data-tilt>
+        <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg></div>
+        <h3>Working 💻</h3>
+        <p>Get paid twice for the same screen time.</p>
+      </div>
+      <div class="cell" data-reveal data-tilt>
+        <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></div>
+        <h3>AFK / asleep 😴</h3>
+        <p>Screen on. Widget on. Earnings on. You: gone.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== IS IT SAFE? (trust — beats the scam objection) ===== -->
+<section class="sec sec-lav" id="safe">
+  <div class="wrap">
+    <div class="head" data-reveal>
+      <span class="sticker green" style="margin-bottom:18px;transform:rotate(-2deg)">🛡️ no catch, we promise</span>
+      <h2>"Okay but… <span class="grad-text">is this a scam?</span>"</h2>
+      <p>Fair question. Free money sounds fake. Here's exactly what PayParty does — and the long list of stuff it <b style="color:var(--ink)">never</b> touches.</p>
+    </div>
+    <div class="safe">
+      <div class="it" data-reveal>
+        <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 2 20 20"/><path d="M6.7 6.7A2 2 0 0 0 4 8.5v8a2 2 0 0 0 2 2h9"/><path d="M22 8.5v7l-5-3"/></svg></div>
+        <h4>No camera</h4><p>It never asks for or touches your webcam. Ever.</p>
+      </div>
+      <div class="it" data-reveal>
+        <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 2 20 20"/><path d="M9 9v3a3 3 0 0 0 5 2.1"/><path d="M5 10v2a7 7 0 0 0 11 5.7"/><path d="M12 19v3"/></svg></div>
+        <h4>No microphone</h4><p>No audio, no listening. The mic stays off.</p>
+      </div>
+      <div class="it" data-reveal>
+        <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M7 14h10" stroke-width="2.6"/></svg></div>
+        <h4>No keylogging</h4><p>We don't read what you type. Period.</p>
+      </div>
+      <div class="it" data-reveal>
+        <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V6l8-3 8 3z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h4>No selling your data</h4><p>Sponsors pay for the screen space — not for you.</p>
+      </div>
+    </div>
+    <p class="howmoney" data-reveal><b>So how's it free money?</b> Brands pay to put a tiny sponsored card in front of real humans.
+      PayParty rents them that little corner of your screen — and splits the cash with you. That's the whole model. No gotchas, no subscriptions, no "complete 47 offers."</p>
+  </div>
+</section>
+
+<!-- ===== CONTROL ===== -->
+<section class="sec" id="control">
+  <div class="wrap control-grid">
+    <div data-reveal>
+      <div class="panel">
+        <div class="ph"><span class="m">P</span><span style="font-weight:800;font-size:14px">Widget settings</span><span class="live" style="color:var(--green-dk);margin-left:auto"><span class="d" style="background:var(--green)"></span>active</span></div>
+        <div class="prow"><span>Position</span><span class="v">Bottom-right</span></div>
+        <div class="prow" style="display:block">
+          <div style="display:flex;justify-content:space-between"><span>Size</span><span class="v">Small</span></div>
+          <div style="margin-top:10px;height:6px;border-radius:99px;background:#e7e0ff;position:relative"><span style="position:absolute;left:30%;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:var(--purple);box-shadow:0 2px 8px rgba(108,77,255,.5)"></span></div>
+        </div>
+        <div class="prow"><span>Hide in fullscreen</span><span class="toggle"><i></i></span></div>
+        <div class="prow"><span>Daily limit</span><span class="v">4 hrs</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="eyebrow" data-reveal>in your hands</div>
+      <h2 class="disp" data-reveal style="font-weight:800;font-size:clamp(36px,5.2vw,62px);line-height:.98;letter-spacing:-.035em;margin-top:14px">Your screen.<br><span class="grad-text">Your rules.</span></h2>
+      <p data-reveal style="margin-top:16px;font-size:17px;color:var(--ink-soft);max-width:42ch;line-height:1.5">PayParty never takes over your computer. You decide where the widget lives, how big it is, and when it runs — down to the minute.</p>
+      <div class="ctrls" data-reveal>
+        <div class="ctrl"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9 2 12l3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></svg>Move anywhere</div>
+        <div class="ctrl"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>Resize tiny → big</div>
+        <div class="ctrl"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>Pause anytime</div>
+        <div class="ctrl"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>Hide in fullscreen</div>
+        <div class="ctrl g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>No camera</div>
+        <div class="ctrl g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>No microphone</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== REAL MONEY ===== -->
+<section class="sec sec-lav" id="money">
+  <div class="wrap money-grid">
+    <div>
+      <div class="eyebrow" data-reveal style="color:var(--green-dk)">cash, not coins</div>
+      <h2 class="disp" data-reveal style="font-weight:800;font-size:clamp(38px,5.4vw,66px);line-height:.96;letter-spacing:-.035em;margin-top:14px">Real money.<br>Not <span style="color:var(--green-dk)">fake points.</span></h2>
+      <p data-reveal style="margin-top:18px;font-size:17px;color:var(--ink-soft);max-width:42ch;line-height:1.55">No coins. No gift-card maze. No "you need 80,000 points." When your balance is ready, cash out straight to the app you already use.</p>
+      <div class="paychips" data-reveal>
+        <div class="paychip">PayPal</div>
+        <div class="paychip">Venmo</div>
+        <div class="paychip cash">💚 Cash App</div>
+      </div>
+    </div>
+    <div data-reveal>
+      <div class="payout">
+        <div class="floor"></div>
+        <div class="lab">Available balance</div>
+        <div class="bal" data-balance>$12.48</div>
+        <div class="min">Minimum cash out: $5.00 · ready now</div>
+        <button class="btn btn-green" data-magnetic data-rain style="width:100%;margin-top:20px;justify-content:center;font-size:16px">Cash out $12.48 💸</button>
+        <div class="recent">
+          <div class="t">Recent payouts</div>
+          <div class="prec"><span class="who">Cash App · ····4821</span><span class="amt">+$15.00</span></div>
+          <div class="prec"><span class="who">PayPal · j••@gmail</span><span class="amt">+$8.20</span></div>
+          <div class="prec"><span class="who">Venmo · @maya</span><span class="amt">+$22.40</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BIG COUNTER ===== -->
+<section class="sec" style="padding:60px 0">
+  <div class="wrap">
+    <div class="bigcard" data-reveal>
+      <div class="b1"></div><div class="b2"></div>
+      <div class="lab">paid out to the party so far</div>
+      <div class="bignum" data-bigcounter>$2,485,018</div>
+      <p class="note">And counting — every single second — while people do completely normal computer stuff. 🪩</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="sec sec-lav" id="faq">
+  <div class="wrap">
+    <div class="head" data-reveal><div class="eyebrow">no dumb questions</div><h2>Questions, <span class="grad-text">answered.</span></h2></div>
+    <div class="faq" data-faq></div>
+  </div>
+</section>
+
+<!-- ===== FINAL CTA ===== -->
+<section class="final" id="download">
+  <div class="glow"></div>
+  <div class="wrap">
+    <span class="sticker yellow" data-reveal style="margin-bottom:22px;animation:pp-wob 4s ease-in-out infinite">🎉 join the party</span>
+    <h2 data-reveal>Stop giving your screen away <span class="grad-text">for free.</span></h2>
+    <p class="sub" data-reveal>Download PayParty, drop the widget, and start stacking cash while your screen's already on.</p>
+    <div data-reveal style="margin-top:34px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a href="#download" class="btn btn-lg btn-mac" data-magnetic data-rain data-os-btn>
+        <span data-os-icon><svg width="19" height="19" viewBox="0 0 384 512" fill="#fff"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg></span>
+        <span data-os-label>Get PayParty free for Mac</span>
+      </a>
+    </div>
+    <p class="hero-fine" data-reveal style="margin-top:18px">Free forever · No credit card · Cash out at $5</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <a href="#top" class="brand"><span class="mark" style="width:30px;height:30px;font-size:16px">P</span><span class="name" style="font-size:17px">PayParty</span></a>
+      <div class="links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Support</a><a href="#">X / Twitter</a></div>
+      <div class="cr">© 2026 PayParty, Inc. · Made for people who like free money</div>
+    </div>
+  </div>
+</footer>
+
+<div class="rain" data-rainlayer></div>
+
+<script>
+/* ============================================================
+   PAYPARTY — interactions
+   ============================================================ */
+(function(){
+  var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* ---- WebGL silk (LIGHT recolor: white → lavender → vibrant purple) ---- */
+  (function silk(){
+    var canvas = document.querySelector('[data-silk]'); if(!canvas) return;
+    var gl = canvas.getContext('webgl',{antialias:true}) || canvas.getContext('experimental-webgl');
+    if(!gl){ canvas.style.background='radial-gradient(120% 90% at 50% 0%,#efe7ff,#fff 70%)'; return; }
+    var VERT='attribute vec2 a_pos;void main(){gl_Position=vec4(a_pos,0.0,1.0);}';
+    var FRAG=[
+      'precision highp float;',
+      'uniform float u_time;uniform vec2 u_resolution;uniform vec2 u_mouse;uniform float u_vel;',
+      'vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}',
+      'vec2 mod289(vec2 x){return x-floor(x*(1.0/289.0))*289.0;}',
+      'vec3 permute(vec3 x){return mod289(((x*34.0)+1.0)*x);}',
+      'float snoise(vec2 v){const vec4 C=vec4(0.211324865405187,0.366025403784439,-0.577350269189626,0.024390243902439);',
+      'vec2 i=floor(v+dot(v,C.yy));vec2 x0=v-i+dot(i,C.xx);vec2 i1=(x0.x>x0.y)?vec2(1.0,0.0):vec2(0.0,1.0);',
+      'vec4 x12=x0.xyxy+C.xxzz;x12.xy-=i1;i=mod289(i);',
+      'vec3 p=permute(permute(i.y+vec3(0.0,i1.y,1.0))+i.x+vec3(0.0,i1.x,1.0));',
+      'vec3 m=max(0.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.0);m=m*m;m=m*m;',
+      'vec3 x=2.0*fract(p*C.www)-1.0;vec3 h=abs(x)-0.5;vec3 ox=floor(x+0.5);vec3 a0=x-ox;',
+      'm*=1.79284291400159-0.85373472095314*(a0*a0+h*h);',
+      'vec3 g;g.x=a0.x*x0.x+h.x*x0.y;g.yz=a0.yz*x12.xz+h.yz*x12.yw;return 130.0*dot(m,g);}',
+      'float fbm(vec2 p){float f=0.65*snoise(p);f+=0.35*snoise(p*2.03+vec2(3.1,1.7));return f;}',
+      'void main(){vec2 uv=gl_FragCoord.xy/u_resolution.xy;vec2 p=uv;p.x*=u_resolution.x/u_resolution.y;',
+      'float t=u_time*0.055;',
+      'vec2 mp=u_mouse;mp.x*=u_resolution.x/u_resolution.y;',
+      'vec2 rd=p-mp;float rl=length(rd);',
+      'float ripple=sin(rl*24.0-u_time*4.5)*exp(-rl*5.0);',
+      'p+=normalize(rd+vec2(0.0001))*ripple*(0.011+0.10*u_vel);',
+      // bigger, bolder liquid forms (lower frequency, stronger domain warp)
+      'vec2 q=vec2(fbm(p*1.15+vec2(0.0,t)),fbm(p*1.15+vec2(5.2,-t)));',
+      'vec2 r=vec2(fbm(p*1.15+1.75*q+vec2(1.7,9.2)+0.65*t),fbm(p*1.15+1.75*q+vec2(8.3,2.8)-0.65*t));',
+      'float n=fbm(p*1.15+1.85*r);float nn=n*0.5+0.5;',
+      'float irid=fbm(p*1.05+1.5*r+vec2(2.0,-t));',
+      // light base, saturated violet peaks, iridescent blue + magenta
+      'vec3 white=vec3(1.0,1.0,1.0);vec3 lav=vec3(0.86,0.83,1.0);',
+      'vec3 violet=vec3(0.56,0.42,1.0);vec3 deep=vec3(0.40,0.19,0.99);',
+      'vec3 blue=vec3(0.33,0.56,1.0);vec3 pink=vec3(0.96,0.46,0.96);',
+      'vec3 col=mix(white,lav,smoothstep(0.0,0.5,nn));',
+      'col=mix(col,violet,smoothstep(0.42,0.84,nn));',
+      'col=mix(col,deep,smoothstep(0.78,1.0,nn));',
+      'col=mix(col,blue,smoothstep(0.8,1.0,nn)*clamp(irid*0.5+0.5,0.0,1.0)*0.55);',
+      'col=mix(col,pink,smoothstep(0.86,1.0,nn)*clamp(-irid*0.5+0.5,0.0,1.0)*0.45);',
+      // bloom + specular crest highlights
+      'float sheen=smoothstep(0.66,1.0,fbm(p*1.9+2.0*r+t));col+=vec3(0.55,0.45,1.0)*sheen*0.42;',
+      'float spec=pow(clamp(nn,0.0,1.0),3.0);col+=vec3(0.5,0.42,1.0)*spec*0.26;',
+      // mouse: soft deepen + bright ripple gleam (scales with speed)
+      'col=mix(col,deep,smoothstep(0.42,0.0,rl)*0.20);',
+      'col+=vec3(0.6,0.5,1.0)*abs(ripple)*smoothstep(0.55,0.0,rl)*(0.4+0.95*u_vel);',
+      'float vig=smoothstep(1.2,0.3,length(uv-vec2(0.5,0.42)));col=mix(white,col,mix(0.72,1.0,vig));',
+      // subtle film grain to kill banding + add texture
+      'float grain=fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453);col+=(grain-0.5)*0.022;',
+      'gl_FragColor=vec4(col,1.0);}'
+    ].join('\n');
+    function sh(t,s){var o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);return o;}
+    var prog=gl.createProgram();gl.attachShader(prog,sh(gl.VERTEX_SHADER,VERT));gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,FRAG));
+    gl.linkProgram(prog);gl.useProgram(prog);
+    var buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+    var loc=gl.getAttribLocation(prog,'a_pos');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+    var uT=gl.getUniformLocation(prog,'u_time'),uR=gl.getUniformLocation(prog,'u_resolution'),uM=gl.getUniformLocation(prog,'u_mouse'),uV=gl.getUniformLocation(prog,'u_vel');
+    var mouse={x:0.5,y:0.6};var vel=0,lmx=0.5,lmy=0.6;
+    function resize(){var dpr=Math.min(window.devicePixelRatio||1,2);var w=Math.max(1,Math.round(canvas.clientWidth*dpr)),h=Math.max(1,Math.round(canvas.clientHeight*dpr));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;gl.viewport(0,0,w,h);}gl.uniform2f(uR,canvas.width,canvas.height);}
+    new ResizeObserver(resize).observe(canvas);resize();
+    var start=performance.now();
+    (function frame(){resize();gl.uniform1f(uT,(performance.now()-start)/1000);gl.uniform2f(uM,mouse.x,mouse.y);vel*=0.91;gl.uniform1f(uV,vel);gl.drawArrays(gl.TRIANGLES,0,3);requestAnimationFrame(frame);})();
+    var glow=document.querySelector('[data-glow]'),hero=document.querySelector('#top');
+    window.addEventListener('mousemove',function(e){
+      mouse.x=e.clientX/window.innerWidth;mouse.y=1-(e.clientY/window.innerHeight);
+      var dvx=mouse.x-lmx,dvy=mouse.y-lmy;vel=Math.min(1.0,vel+Math.sqrt(dvx*dvx+dvy*dvy)*7.0);lmx=mouse.x;lmy=mouse.y;
+      if(glow&&hero){var r=hero.getBoundingClientRect();var inside=e.clientY>r.top&&e.clientY<r.bottom;
+        glow.style.opacity=inside?'1':'0';glow.style.left=(e.clientX-r.left)+'px';glow.style.top=(e.clientY-r.top)+'px';}
+    });
+  })();
+
+  /* ---- reveal on scroll ---- */
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.14});
+  document.querySelectorAll('[data-reveal]').forEach(function(el){io.observe(el);});
+
+  /* ---- nav shadow ---- */
+  var nav=document.getElementById('nav');
+  addEventListener('scroll',function(){nav.classList.toggle('scrolled',scrollY>20);});
+
+  /* ---- device-aware download button (Mac / Windows / Linux) ---- */
+  (function osBtn(){
+    function detect(){
+      var d=navigator.userAgentData;
+      if(d&&d.platform){var pl=d.platform.toLowerCase();
+        if(pl.indexOf('win')>=0)return 'Windows';
+        if(pl.indexOf('mac')>=0)return 'Mac';
+        if(pl.indexOf('linux')>=0||pl.indexOf('android')>=0)return 'Linux';}
+      var ua=navigator.userAgent||'',p=navigator.platform||'';
+      if(/Win/i.test(p)||/Windows/i.test(ua))return 'Windows';
+      if(/Mac/i.test(p)||/iPhone|iPad|iPod/i.test(ua))return 'Mac';
+      if(/Linux|X11|Android|CrOS/i.test(ua))return 'Linux';
+      return 'Mac';
+    }
+    var os=detect();
+    var APPLE='<svg width="16" height="20" viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>';
+    var WIN='<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.5 10.6 4.4v7.1H3zM11.5 4.25 21 3v8.5h-9.5zM3 12.5h7.6v7.1L3 18.5zM11.5 12.5H21V21l-9.5-1.3z"/></svg>';
+    var LINUX='<svg width="16" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139zm.529 3.405h.013c.213 0 .396.062.584.198.19.135.33.332.438.533.105.259.158.459.166.724 0-.02.006-.04.006-.06v.105a.086.086 0 01-.004-.021l-.004-.024a1.807 1.807 0 01-.15.706.953.953 0 01-.213.335.71.71 0 00-.088-.042c-.104-.045-.198-.064-.284-.133a1.312 1.312 0 00-.22-.066c.05-.06.146-.133.183-.198.053-.128.082-.264.088-.402v-.02a1.21 1.21 0 00-.061-.4c-.045-.134-.101-.2-.183-.333-.084-.066-.167-.132-.267-.132h-.016c-.093 0-.176.03-.262.132a.8.8 0 00-.205.334 1.18 1.18 0 00-.09.4v.019c.002.089.008.179.02.267-.193-.067-.438-.135-.607-.202a1.635 1.635 0 01-.018-.2v-.02a1.772 1.772 0 01.15-.768c.082-.22.232-.406.43-.533a.985.985 0 01.594-.2zm-2.962.059h.036c.142 0 .27.048.399.135.146.129.264.288.344.465.09.199.14.4.153.667v.004c.007.134.006.2-.002.266v.08c-.03.007-.056.018-.083.024-.152.055-.274.135-.393.2.012-.09.013-.18.003-.267v-.015c-.012-.133-.04-.2-.082-.333a.613.613 0 00-.166-.267.248.248 0 00-.183-.064h-.021c-.071.006-.13.04-.186.132a.552.552 0 00-.12.27.944.944 0 00-.023.33v.015c.012.135.037.2.08.334.046.134.098.2.166.268.01.009.02.018.034.024-.07.057-.117.07-.176.136a.304.304 0 01-.131.068 2.62 2.62 0 01-.275-.402 1.772 1.772 0 01-.155-.667 1.759 1.759 0 01.08-.668 1.43 1.43 0 01.283-.535c.128-.133.26-.2.418-.2zm1.37 1.706c.332 0 .733.065 1.216.399.293.2.523.269 1.052.468h.003c.255.136.405.266.478.399v-.131a.571.571 0 01.016.47c-.123.31-.516.643-1.063.842v.002c-.268.135-.501.333-.775.465-.276.135-.588.292-1.012.267a1.139 1.139 0 01-.448-.067 3.566 3.566 0 01-.322-.198c-.195-.135-.363-.332-.612-.465v-.005h-.005c-.4-.246-.616-.512-.686-.71-.07-.268-.005-.47.193-.6.224-.135.38-.271.483-.336.104-.074.143-.102.176-.131h.002v-.003c.169-.202.436-.47.839-.601.139-.036.294-.065.466-.065zm2.8 2.142c.358 1.417 1.196 3.475 1.735 4.473.286.534.855 1.659 1.102 3.024.156-.005.33.018.513.064.646-1.671-.546-3.467-1.089-3.966-.22-.2-.232-.335-.123-.335.59.534 1.365 1.572 1.646 2.757.13.535.16 1.104.021 1.67.067.028.135.06.205.067 1.032.534 1.413.938 1.23 1.537v-.043c-.06-.003-.12 0-.18 0h-.016c.151-.467-.182-.825-1.065-1.224-.915-.4-1.646-.336-1.77.465-.008.043-.013.066-.018.135-.068.023-.139.053-.209.064-.43.268-.662.669-.793 1.187-.13.533-.17 1.156-.205 1.869v.003c-.02.334-.17.838-.319 1.35-1.5 1.072-3.58 1.538-5.348.334a2.645 2.645 0 00-.402-.533 1.45 1.45 0 00-.275-.333c.182 0 .338-.03.465-.067a.615.615 0 00.314-.334c.108-.267 0-.697-.345-1.163-.345-.467-.931-.995-1.788-1.521-.63-.4-.986-.87-1.15-1.396-.165-.534-.143-1.085-.015-1.645.245-1.07.873-2.11 1.274-2.763.107-.065.037.135-.408.974-.396.751-1.14 2.497-.122 3.854a8.123 8.123 0 01.647-2.876c.564-1.278 1.743-3.504 1.836-5.268.048.036.217.135.289.202.218.133.38.333.59.465.21.201.477.335.876.335.039.003.075.006.11.006.412 0 .73-.134.997-.268.29-.134.52-.334.74-.4h.005c.467-.135.835-.402 1.044-.7zm2.185 8.958c.037.6.343 1.245.882 1.377.588.134 1.434-.333 1.791-.765l.211-.01c.315-.007.577.01.847.268l.003.003c.208.199.305.53.391.876.085.4.154.78.409 1.066.486.527.645.906.636 1.14l.003-.007v.018l-.003-.012c-.015.262-.185.396-.498.595-.63.401-1.746.712-2.457 1.57-.618.737-1.37 1.14-2.036 1.191-.664.053-1.237-.2-1.574-.898l-.005-.003c-.21-.4-.12-1.025.056-1.69.176-.668.428-1.344.463-1.897.037-.714.076-1.335.195-1.814.12-.465.308-.797.641-.984l.045-.022zm-10.814.049h.01c.053 0 .105.005.157.014.376.055.706.333 1.023.752l.91 1.664.003.003c.243.533.754 1.064 1.189 1.637.434.598.77 1.131.729 1.57v.006c-.057.744-.48 1.148-1.125 1.294-.645.135-1.52.002-2.395-.464-.968-.536-2.118-.469-2.857-.602-.369-.066-.61-.2-.723-.4-.11-.2-.113-.602.123-1.23v-.004l.002-.003c.117-.334.03-.752-.027-1.118-.055-.401-.083-.71.043-.94.16-.334.396-.4.69-.533.294-.135.64-.202.915-.47h.002v-.002c.256-.268.445-.601.668-.838.19-.201.38-.336.663-.336zm7.159-9.074c-.435.201-.945.535-1.488.535-.542 0-.97-.267-1.28-.466-.154-.134-.28-.268-.373-.335-.164-.134-.144-.333-.074-.333.109.016.129.134.199.2.096.066.215.2.36.333.292.2.68.467 1.167.467.485 0 1.053-.267 1.398-.466.195-.135.445-.334.648-.467.156-.136.149-.267.279-.267.128.016.034.134-.147.332a8.097 8.097 0 01-.69.468zm-1.082-1.583V5.64c-.006-.02.013-.042.029-.05.074-.043.18-.027.26.004.063 0 .16.067.15.135-.006.049-.085.066-.135.066-.055 0-.092-.043-.141-.068-.052-.018-.146-.008-.163-.065zm-.551 0c-.02.058-.113.049-.166.066-.047.025-.086.068-.14.068-.05 0-.13-.02-.136-.068-.01-.066.088-.133.15-.133.08-.031.184-.047.259-.005.019.009.036.03.03.05v.02h.003z"/></svg>';
+    var ICON={Mac:APPLE,Windows:WIN,Linux:LINUX};
+    document.querySelectorAll('[data-os-icon]').forEach(function(el){el.innerHTML=ICON[os]||APPLE;el.style.display='inline-flex';});
+    document.querySelectorAll('[data-os-label]').forEach(function(el){el.textContent=(el.closest('.final')?'Get PayParty free for ':'Get for ')+os;});
+  })();
+
+  /* ---- typewriter word rotator under "Get paid to" ---- */
+  (function typer(){
+    var el=document.querySelector('[data-type]');if(!el)return;
+    var words=['do anything.','do nothing.','game.','chill.','doomscroll.','study.','watch TV.','vibe.'];
+    if(reduce){el.textContent='do anything.';return;}
+    var wi=0,ci=words[0].length,del=true;
+    function tick(){
+      var w=words[wi];
+      ci+=del?-1:1;
+      if(ci<0)ci=0;
+      el.textContent=w.slice(0,ci);
+      if(!del&&ci>=w.length){del=true;return setTimeout(tick,1500);}   // full word → hold, then delete
+      if(del&&ci<=0){del=false;wi=(wi+1)%words.length;return setTimeout(tick,320);} // cleared → next word
+      setTimeout(tick,del?42:(80+Math.random()*45));
+    }
+    setTimeout(tick,1600);
+  })();
+
+  /* ---- periodic "+$0.04" coin pop above the ad card (earning cue) ---- */
+  (function coinPop(){
+    var coin=document.querySelector('[data-coin]'),w=document.querySelector('[data-widget]'),scr=document.querySelector('[data-screen]');
+    if(!coin||!w||!scr) return;
+    setInterval(function(){
+      if(reduce) return;
+      var wr=w.getBoundingClientRect(),sr=scr.getBoundingClientRect();
+      coin.style.left=(wr.left-sr.left+wr.width/2)+'px';coin.style.top=(wr.top-sr.top+6)+'px';
+      coin.style.animation='none';void coin.offsetWidth;coin.style.animation='pp-coin 1.5s ease-out';
+    },2600);
+  })();
+
+  /* ---- DRAG the PayParty widget around the laptop screen ---- */
+  (function drag(){
+    var w=document.querySelector('[data-widget]'),scr=document.querySelector('[data-screen]'),
+        handle=document.querySelector('[data-draghandle]'),hint=document.querySelector('[data-draghint]');
+    if(!w||!scr||!handle) return;
+    var on=false,sx,sy,ox,oy;
+    function place(){var wr=w.getBoundingClientRect(),sr=scr.getBoundingClientRect();ox=wr.left-sr.left;oy=wr.top-sr.top;w.style.left=ox+'px';w.style.top=oy+'px';w.style.right='auto';}
+    function down(e){if(e.target.closest&&e.target.closest('button'))return;on=true;w.classList.add('grabbed');place();var pt=e.touches?e.touches[0]:e;sx=pt.clientX;sy=pt.clientY;if(hint)hint.style.opacity='0';e.preventDefault();}
+    function move(e){if(!on)return;var pt=e.touches?e.touches[0]:e;var sr=scr.getBoundingClientRect(),wr=w.getBoundingClientRect();var nx=ox+(pt.clientX-sx),ny=oy+(pt.clientY-sy);nx=Math.max(4,Math.min(nx,sr.width-wr.width-4));ny=Math.max(25,Math.min(ny,sr.height-wr.height-4));w.style.left=nx+'px';w.style.top=ny+'px';}
+    function up(){on=false;}
+    handle.addEventListener('mousedown',down);document.addEventListener('mousemove',move);document.addEventListener('mouseup',up);
+    handle.addEventListener('touchstart',down,{passive:false});document.addEventListener('touchmove',move,{passive:false});document.addEventListener('touchend',up);
+  })();
+
+  /* ---- payout balance tick ---- */
+  (function bal(){var el=document.querySelector('[data-balance]');if(!el)return;var v=12.48;
+    setInterval(function(){v+=0.01;el.textContent='$'+v.toFixed(2);},3000);})();
+
+  /* ---- big counter count-up ---- */
+  (function big(){var el=document.querySelector('[data-bigcounter]');if(!el)return;var started=false;
+    var o=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!started){started=true;run();}});});o.observe(el);
+    function run(){var end=2485018,cur=end-42000,t=setInterval(function(){cur+=Math.ceil((end-cur)/12)+137;if(cur>=end){cur=end;clearInterval(t);tick();}el.textContent='$'+cur.toLocaleString('en-US');},40);}
+    function tick(){setInterval(function(){var n=parseInt(el.textContent.replace(/[^0-9]/g,''),10)+(Math.floor(Math.random()*4)+1);el.textContent='$'+n.toLocaleString('en-US');},900);}
+  })();
+
+  /* ---- trust marquee ---- */
+  (function trust(){
+    var items=[['🔒','No camera, ever'],['🎧','No microphone'],['⌨️','No keylogging'],['💚','Cash out to Cash App'],['🍎','Made for Mac'],['⚡','Set up in 60 seconds'],['🙅','No subscriptions'],['🪙','Real money, not points'],['🛡️','Your data stays yours'],['💸','Pause anytime']];
+    document.querySelectorAll('[data-grp]').forEach(function(grp){
+      items.forEach(function(it){var s=document.createElement('span');s.className='chip';s.innerHTML='<span style="font-size:18px">'+it[0]+'</span>'+it[1];grp.appendChild(s);});
+    });
+  })();
+
+  /* ---- FAQ ---- */
+  (function faq(){
+    var data=[
+      ['Wait, is this actually free?','Yes. PayParty is 100% free — no subscription, no credit card, nothing to buy. You install it, it pays you. Brands fund the whole thing.'],
+      ['How does PayParty make money then?','Sponsors pay to show a tiny card in front of real people. We rent them that little corner of your screen and split the money with you. That\'s the entire business model.'],
+      ['Is it spyware? What can it see?','No. It doesn\'t use your camera, mic, or keyboard, and it doesn\'t read your files or screen contents. It only knows your screen is on so it can run the sponsored card.'],
+      ['How much can I actually make?','Depends how long your screen is on. Most people make pocket money — think coffee-to-a-night-out range, depending on how long your screen is on. It\'s side cash, not a salary.'],
+      ['When and how do I get paid?','Cash out the moment you hit $5, straight to Cash App, PayPal, or Venmo. Real money — no coins, no gift cards, no points to convert.'],
+      ['Will it slow down my games or computer?','Nope. The widget is tiny and lightweight, hides itself in fullscreen if you want, and you can pause or resize it any time.'],
+      ['Is it on Windows?','Mac first. Windows is coming — get the app now and you\'ll be first in line when it drops.']
+    ];
+    var box=document.querySelector('[data-faq]');if(!box)return;
+    data.forEach(function(d){
+      var qa=document.createElement('div');qa.className='qa';
+      qa.innerHTML='<button><span>'+d[0]+'</span><span class="pl">+</span></button><div class="ans"><p>'+d[1]+'</p></div>';
+      var btn=qa.querySelector('button'),ans=qa.querySelector('.ans');
+      btn.addEventListener('click',function(){
+        var open=qa.classList.toggle('open');
+        ans.style.maxHeight=open?ans.scrollHeight+'px':0;
+      });
+      box.appendChild(qa);
+    });
+  })();
+
+  /* ---- (magnetic button effect removed — it was annoying) ---- */
+
+  /* ---- tilt cards ---- */
+  if(!reduce) document.querySelectorAll('[data-tilt]').forEach(function(el){
+    el.addEventListener('mousemove',function(e){var r=el.getBoundingClientRect();var x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;el.style.transform='perspective(700px) rotateY('+(x*7)+'deg) rotateX('+(-y*7)+'deg) translateY(-6px)';});
+    el.addEventListener('mouseleave',function(){el.style.transform='';});
+  });
+
+  /* ---- coin rain on CTA click (chaos) ---- */
+  var layer=document.querySelector('[data-rainlayer]');
+  document.querySelectorAll('[data-rain]').forEach(function(el){
+    el.addEventListener('click',function(e){
+      e.preventDefault();
+      if(reduce){location.hash='#download';return;}
+      var emojis=['💸','🤑','💵','🪙','💰','🥳'];
+      for(var i=0;i<28;i++){(function(i){
+        var b=document.createElement('b');b.textContent=emojis[i%emojis.length];
+        b.style.left=(Math.random()*100)+'vw';b.style.animationDuration=(1.6+Math.random()*1.4)+'s';b.style.animationDelay=(Math.random()*.4)+'s';b.style.fontSize=(20+Math.random()*22)+'px';
+        layer.appendChild(b);setTimeout(function(){b.remove();},3400);
+      })(i);}
+    });
+  });
+})();
+</script>
+</body>
+</html>

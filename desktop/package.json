@@ -1,0 +1,43 @@
+{
+  "name": "payparty",
+  "productName": "PayParty",
+  "version": "0.1.0",
+  "description": "Get paid to do whatever — PayParty drops a tiny sponsored widget on your desktop and pays you while your screen is on.",
+  "main": "main.js",
+  "author": "PayParty, Inc.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win",
+    "dist:linux": "electron-builder --linux"
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "electron-store": "^8.2.0"
+  },
+  "build": {
+    "appId": "app.payparty.desktop",
+    "productName": "PayParty",
+    "directories": { "output": "release" },
+    "files": ["**/*", "!release/**"],
+    "mac": {
+      "category": "public.app-category.finance",
+      "icon": "build/icon.icns",
+      "target": ["dmg", "zip"]
+    },
+    "win": {
+      "icon": "build/icon.ico",
+      "target": ["nsis"]
+    },
+    "linux": {
+      "icon": "build/icon.png",
+      "target": ["AppImage", "deb"],
+      "category": "Office"
+    }
+  }
+}

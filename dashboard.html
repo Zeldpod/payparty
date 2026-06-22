@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PayParty — Dashboard</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#160d2e;--ink-soft:#5a5170;--ink-faint:#8b83a3;--purple:#6C4DFF;--purple-lt:#8B5CFF;--purple-dk:#5A35FF;--green:#00C853;--green-dk:#00a344;--glass-brd:rgba(108,77,255,.16)}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;background:#fff;display:grid;place-items:center;overflow:hidden}
+  canvas[data-silk]{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+  .veil{position:fixed;inset:0;z-index:1;background:radial-gradient(60% 60% at 50% 45%,rgba(255,255,255,.5),rgba(255,255,255,0) 75%)}
+  .disp{font-family:'Bricolage Grotesque',sans-serif}
+  .grad{background:linear-gradient(100deg,var(--purple-lt),var(--purple-dk));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .wrap{position:relative;z-index:2;width:min(620px,calc(100vw - 32px));display:grid;gap:16px;animation:rise .6s cubic-bezier(.2,.7,.2,1)}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .top{display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand .mark{display:grid;place-items:center;width:36px;height:36px;border-radius:11px;color:#fff;font-weight:900;font-size:18px;background:linear-gradient(150deg,var(--purple-lt),var(--purple));box-shadow:0 6px 16px rgba(108,77,255,.5)}
+  .brand .hi{font-size:14px;color:var(--ink-soft)}.brand .hi b{color:var(--ink)}
+  .logout{padding:9px 16px;border-radius:99px;background:rgba(255,255,255,.7);border:1px solid var(--glass-brd);color:var(--ink-soft);font-weight:700;font-size:13px;cursor:pointer}
+  .logout:hover{color:var(--purple)}
+  .balance{position:relative;overflow:hidden;border-radius:26px;padding:30px;color:#fff;background:linear-gradient(150deg,#8B5CFF,#5A35FF);box-shadow:0 26px 60px rgba(90,53,255,.4)}
+  .balance .b1{position:absolute;top:-30%;right:-10%;width:55%;height:120%;border-radius:50%;filter:blur(46px);background:radial-gradient(circle,rgba(255,255,255,.4),transparent 70%)}
+  .balance .lab{position:relative;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e7dbff}
+  .balance .amt{position:relative;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:58px;letter-spacing:-.03em;line-height:1.05;margin-top:6px}
+  .balance .sub{position:relative;margin-top:6px;font-size:13px;color:#e7dbff}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .tile{border-radius:22px;padding:22px;background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.85);box-shadow:0 14px 34px rgba(108,77,255,.14);cursor:pointer;transition:transform .2s}
+  .tile:hover{transform:translateY(-3px)}
+  .tile .t{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:18px;display:flex;align-items:center;gap:9px}
+  .tile .d{font-size:13px;color:var(--ink-soft);margin-top:6px}
+  .tile .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:rgba(108,77,255,.1);color:var(--purple)}
+  @media(max-width:520px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <canvas data-silk></canvas>
+  <div class="veil"></div>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand"><span class="mark">P</span><span class="hi">Welcome back, <b id="who">friend</b></span></div>
+      <button class="logout" id="logout">Log out</button>
+    </div>
+    <div class="balance">
+      <div class="b1"></div>
+      <div class="lab">Available balance</div>
+      <div class="amt" id="balance">$0.00</div>
+      <div class="sub" id="lifetime">$0.00 earned all-time</div>
+    </div>
+    <div class="grid">
+      <div class="tile" id="get-mac">
+        <div class="t"><span class="ic"><svg width="18" height="18" viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9z"/></svg></span> Download desktop app</div>
+        <div class="d">Mac · Windows · Linux — the floating widget that pays you.</div>
+      </div>
+      <div class="tile" id="get-ext">
+        <div class="t"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/></svg></span> Get Chrome extension</div>
+        <div class="d">Earn right in your browser — no install needed.</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/silk.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+  (function(){
+    const $ = (s) => document.querySelector(s);
+    const money = (n) => '$' + (Math.round((n || 0) * 100) / 100).toFixed(2);
+    $('#get-mac').onclick = () => { location.href = 'index.html#download'; };
+    $('#get-ext').onclick = () => { location.href = 'index.html#download'; }; // → Chrome Web Store URL once published
+
+    if (!window.supabase || !window.supabase.createClient) return;
+    const KEY = window.PAYPARTY_SUPABASE_ANON_KEY || '';
+    if (!KEY || KEY.indexOf('PASTE_') === 0) { location.replace('login.html'); return; }
+    const sb = window.supabase.createClient(window.PAYPARTY_SUPABASE_URL, KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+
+    $('#logout').onclick = async () => { await sb.auth.signOut(); location.replace('login.html'); };
+
+    (async function(){
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) { location.replace('login.html'); return; }
+      const user = session.user;
+      $('#who').textContent = (user.email || (user.user_metadata && user.user_metadata.name) || 'friend').split('@')[0];
+      try {
+        const { data: profile } = await sb.from('profiles').select('balance,lifetime').eq('id', user.id).maybeSingle();
+        $('#balance').textContent = money(profile && profile.balance);
+        $('#lifetime').textContent = money(profile && profile.lifetime) + ' earned all-time';
+      } catch (e) { /* table not created yet → shows $0.00 */ }
+    })();
+  })();
+  </script>
+</body>
+</html>

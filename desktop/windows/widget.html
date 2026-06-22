@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Relaxed CSP: this page hosts 3rd-party AdMaven creatives, which need https + inline/eval.
+     The production page at payparty.app/widget can tighten this to AdMaven's exact domains. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' https: 'unsafe-inline' 'unsafe-eval'; style-src 'self' https: 'unsafe-inline'; img-src 'self' https: data:; font-src https: data:; frame-src https:; connect-src 'self' https:; media-src 'self' https: data: blob:">
+<title>PayParty Widget</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="widget.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="card tier-standard" id="card">
+      <div class="head">
+        <span class="m">P</span><span class="nm">PayParty</span>
+        <span class="live"><i></i>earning</span>
+        <span class="x" id="close" title="Hide widget">✕</span>
+      </div>
+
+      <div class="tag">
+        <span class="lab"><i></i><span id="tag-label">Sponsored</span></span>
+        <span class="rate" id="rate" title="Bigger widget = higher-paying ads">$0.05/min</span>
+      </div>
+
+      <div class="creative">
+        <!-- compact + standard: product card (scales with tier) -->
+        <div class="house" id="house">
+          <div class="info">
+            <div class="price">$249.99</div>
+            <div class="name">AirPods Pro 3</div>
+          </div>
+          <div class="tile"><img src="../assets/airpods.png" alt="Sponsored product"></div>
+        </div>
+        <!-- large: video ad placeholder (real AdMaven video/interstitial slots in here) -->
+        <div class="video" id="video">
+          <div class="vthumb">
+            <span class="play">▶</span>
+            <span class="vmeta"><b>Sponsored video</b><span id="vtime">0:15</span></span>
+            <span class="vbar"><i id="vprog"></i></span>
+          </div>
+        </div>
+        <!-- AdMaven network creative renders here when configured -->
+        <div id="admaven-slot"></div>
+      </div>
+
+      <button class="cta" id="cta">View sponsor →</button>
+
+      <div class="foot">
+        <span class="earn" id="earn">$0.00 today</span>
+        <span class="more" id="more">Fullscreen offer</span>
+      </div>
+
+      <!-- tier-up flash -->
+      <div class="flash" id="flash"></div>
+      <!-- resize hint (window resizes from its edges) -->
+      <div class="grip" title="Drag the edge to resize · bigger = higher pay"></div>
+      <div class="coin" id="coin">+$0.05</div>
+    </div>
+  </div>
+  <script src="widget.js"></script>
+</body>
+</html>
