@@ -168,6 +168,24 @@ header.hero>.wrap{max-width:1320px}
 .hero-trust{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:26px}
 .hero-trust .t{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--ink-soft)}
 .hero-trust .t svg{color:var(--purple);flex:none}
+/* hero payout band */
+.hero-inner{width:100%}
+.hero-payout{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:24px;margin-top:54px;flex-wrap:wrap}
+.cashout-big{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(24px,3.2vw,44px);letter-spacing:-.03em;line-height:1}
+.cashout-big .sub{display:block;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:14px;color:var(--ink-soft);letter-spacing:0;margin-top:8px}
+.pay-icons{display:flex;gap:18px}
+.pay-icons img{width:66px;height:66px;border-radius:18px;box-shadow:0 14px 30px rgba(40,20,90,.28);transition:transform .22s cubic-bezier(.34,1.56,.64,1)}
+.pay-icons img:nth-child(1){transform:rotate(-7deg)}
+.pay-icons img:nth-child(2){transform:rotate(4deg)}
+.pay-icons img:nth-child(3){transform:rotate(-4deg)}
+.pay-icons img:hover{transform:translateY(-8px) rotate(0) scale(1.06)}
+/* playful hand-drawn annotations */
+.annot{position:absolute;z-index:4;pointer-events:none}
+.try-me{top:11%;right:6%;display:flex;flex-direction:column;align-items:center;gap:0;
+  font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(22px,2vw,30px);color:var(--ink);transform:rotate(3deg)}
+.try-me img{width:42px;height:auto;margin-top:2px;margin-right:24px}
+.arrow-ext{left:31%;bottom:30%;width:74px;height:auto;transform:rotate(14deg)}
+@media(max-width:1080px){.annot{display:none}}
 
 /* ---- MacBook (real product image) ---- */
 .laptop{position:relative;width:100%;max-width:800px;margin:0 0 0 auto;animation:pp-floatslow 11s ease-in-out infinite}
@@ -425,7 +443,8 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
     <div class="cursorglow" data-glow></div>
     <div class="hero-veil"></div>
   </div>
-  <div class="wrap hero-grid">
+  <div class="wrap hero-inner">
+   <div class="hero-grid">
 
     <!-- LEFT: copy -->
     <div class="hero-copy">
@@ -484,7 +503,21 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
       </div>
     </div>
 
-  </div>
+   </div><!-- /hero-grid -->
+
+   <div class="hero-payout">
+     <div class="cashout-big">Cash out <span class="grad-text">instantly.</span><span class="sub">$5 minimum · straight to the app you already use</span></div>
+     <div class="pay-icons">
+       <img src="assets/cashapp.png" alt="Cash out with Cash App" draggable="false">
+       <img src="assets/venmo.png" alt="Cash out with Venmo" draggable="false">
+       <img src="assets/paypal.png" alt="Cash out with PayPal" draggable="false">
+     </div>
+   </div>
+  </div><!-- /hero-inner -->
+
+  <!-- playful hand-drawn annotations -->
+  <div class="annot try-me">TRY ME<img src="assets/arrow-down.png" alt=""></div>
+  <img class="annot arrow-ext" src="assets/arrow-curvy.png" alt="">
 </header>
 
 <!-- ===== TRUST STRIP ===== -->
