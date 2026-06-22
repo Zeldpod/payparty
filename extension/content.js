@@ -15,7 +15,7 @@
   if (window.top !== window) return;            // top frame only
   if (window.__payparty) return; window.__payparty = true;
 
-  var WIDGET_URL = 'https://payparty.fun/widget?host=ext';
+  var WIDGET_URL = 'https://www.payparty.fun/widget?host=ext';
   var pip = null;
 
   /* ---- launcher button (the extension's own branded UI, opt-in, NOT an ad) ---- */

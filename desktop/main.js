@@ -20,7 +20,7 @@ const store = new Store({
    AdMaven integration). For local dev it falls back to the
    bundled widget.html so the app runs without deploying first.
    ------------------------------------------------------------ */
-const REMOTE_WIDGET_URL = 'https://payparty.fun/widget?host=app';
+const REMOTE_WIDGET_URL = 'https://www.payparty.fun/widget?host=app';
 const LOCAL_WIDGET_URL = 'file://' + path.join(__dirname, 'windows', 'widget.html');
 // Loads the live hosted widget (real ads on the verified domain) by default.
 // PP_WIDGET_URL=local  → bundled house-ad widget (offline dev)
