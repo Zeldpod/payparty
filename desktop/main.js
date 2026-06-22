@@ -78,6 +78,7 @@ function createMainWindow() {
     frame: isMac ? true : false,
     titleBarStyle: isMac ? 'hiddenInset' : 'default',
     trafficLightPosition: isMac ? { x: 18, y: 20 } : undefined,
+    icon: path.join(__dirname, 'build', 'icon.png'),
     show: false,
     webPreferences: { preload, contextIsolation: true, nodeIntegration: false }
   });
@@ -220,6 +221,7 @@ ipcMain.on('window:close', (e) => {
    app lifecycle
    ============================================================ */
 app.whenReady().then(() => {
+  if (isMac && app.dock) { try { app.dock.setIcon(path.join(__dirname, 'build', 'icon.png')); } catch (e) {} }
   if (process.env.PP_SHOT) return runShot(process.env.PP_SHOT);
   createMainWindow();
   app.on('activate', () => {
