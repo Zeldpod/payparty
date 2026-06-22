@@ -5,7 +5,8 @@ Get paid to do whatever. A tiny sponsored widget that pays you while your screen
 ## Structure
 | Path | What |
 |------|------|
-| `index.html` · `login.html` · `dashboard.html` | Marketing site + Supabase auth (deployed to **payparty.fun** via Vercel) |
+| `index.html` · `login.html` · `dashboard.html` | Marketing site, Supabase auth, account dashboard, and cash-out requests (deployed to **payparty.fun** via Vercel) |
+| `dashboard.css` · `dashboard.js` | Dashboard presentation, account activity, and payout-request UI |
 | `supabase-config.js` | Public client config (anon key only — safe) |
 | `supabase/schema.sql` | Run once in the Supabase SQL editor |
 | `assets/` | Silk background, app icon, product art |
@@ -14,6 +15,26 @@ Get paid to do whatever. A tiny sponsored widget that pays you while your screen
 
 ## Web (Vercel)
 Static site — no build step. Vercel auto-detects. Domain: `payparty.fun`.
+
+## Supabase / cash-outs
+
+Run [`supabase/schema.sql`](supabase/schema.sql) in the Supabase SQL Editor after every schema change. The schema:
+
+- removes direct client balance updates;
+- records verified earnings in an immutable ledger;
+- reserves cash-out funds atomically with a replay-safe request key;
+- exposes payout status/history to the owning user only; and
+- refunds failed or cancelled requests exactly once.
+
+`request_cashout` is available to authenticated clients. `credit_earnings` and
+`resolve_cashout` are service-role-only and must be called by a trusted server,
+verified ad postback, or payout worker. A cash-out request queues and reserves
+funds; actual PayPal/Venmo/Cash App delivery still requires that private worker
+and the relevant provider credentials.
+
+For a local visual preview without an account, serve the repository and open
+`/dashboard.html?preview=1` on `localhost`. Preview mode cannot run on the live
+domain.
 
 ## Secrets
 The `anon` key is public and lives in `supabase-config.js`. The **`service_role` / `sb_secret_*` keys are NEVER committed** — they belong in Vercel/server **environment variables** only.

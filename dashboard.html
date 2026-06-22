@@ -1,102 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="admaven-placement" content="BqTa5rjn4">
-<title>PayParty — Dashboard</title>
-<link rel="icon" href="favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
-<style>
-  :root{--ink:#160d2e;--ink-soft:#5a5170;--ink-faint:#8b83a3;--purple:#6C4DFF;--purple-lt:#8B5CFF;--purple-dk:#5A35FF;--green:#00C853;--green-dk:#00a344;--glass-brd:rgba(108,77,255,.16)}
-  *{margin:0;padding:0;box-sizing:border-box}
-  html,body{height:100%}
-  body{font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;background:#fff;display:grid;place-items:center;overflow:hidden}
-  canvas[data-silk]{position:fixed;inset:0;width:100%;height:100%;z-index:0}
-  .veil{position:fixed;inset:0;z-index:1;background:radial-gradient(60% 60% at 50% 45%,rgba(255,255,255,.5),rgba(255,255,255,0) 75%)}
-  .disp{font-family:'Bricolage Grotesque',sans-serif}
-  .grad{background:linear-gradient(100deg,var(--purple-lt),var(--purple-dk));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-  .wrap{position:relative;z-index:2;width:min(620px,calc(100vw - 32px));display:grid;gap:16px;animation:rise .6s cubic-bezier(.2,.7,.2,1)}
-  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-  .top{display:flex;align-items:center;justify-content:space-between}
-  .brand{display:flex;align-items:center;gap:10px}
-  .brand .mark{display:grid;place-items:center;width:36px;height:36px;border-radius:11px;color:transparent;font-size:0;overflow:hidden;background:url('assets/app-icon.png') center/cover no-repeat;box-shadow:0 6px 16px rgba(108,77,255,.4)}
-  .brand .hi{font-size:14px;color:var(--ink-soft)}.brand .hi b{color:var(--ink)}
-  .logout{padding:9px 16px;border-radius:99px;background:rgba(255,255,255,.7);border:1px solid var(--glass-brd);color:var(--ink-soft);font-weight:700;font-size:13px;cursor:pointer}
-  .logout:hover{color:var(--purple)}
-  .balance{position:relative;overflow:hidden;border-radius:26px;padding:30px;color:#fff;background:linear-gradient(150deg,#8B5CFF,#5A35FF);box-shadow:0 26px 60px rgba(90,53,255,.4)}
-  .balance .b1{position:absolute;top:-30%;right:-10%;width:55%;height:120%;border-radius:50%;filter:blur(46px);background:radial-gradient(circle,rgba(255,255,255,.4),transparent 70%)}
-  .balance .lab{position:relative;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e7dbff}
-  .balance .amt{position:relative;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:58px;letter-spacing:-.03em;line-height:1.05;margin-top:6px}
-  .balance .sub{position:relative;margin-top:6px;font-size:13px;color:#e7dbff}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  .tile{border-radius:22px;padding:22px;background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.85);box-shadow:0 14px 34px rgba(108,77,255,.14);cursor:pointer;transition:transform .2s}
-  .tile:hover{transform:translateY(-3px)}
-  .tile .t{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:18px;display:flex;align-items:center;gap:9px}
-  .tile .d{font-size:13px;color:var(--ink-soft);margin-top:6px}
-  .tile .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:rgba(108,77,255,.1);color:var(--purple)}
-  @media(max-width:520px){.grid{grid-template-columns:1fr}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#6c4dff">
+  <meta name="admaven-placement" content="BqTa5rjn4">
+  <title>PayParty — Dashboard</title>
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
-  <canvas data-silk></canvas>
-  <div class="veil"></div>
-  <div class="wrap">
-    <div class="top">
-      <div class="brand"><span class="mark">P</span><span class="hi">Welcome back, <b id="who">friend</b></span></div>
-      <button class="logout" id="logout">Log out</button>
-    </div>
-    <div class="balance">
-      <div class="b1"></div>
-      <div class="lab">Available balance</div>
-      <div class="amt" id="balance">$0.00</div>
-      <div class="sub" id="lifetime">$0.00 earned all-time</div>
-    </div>
-    <div class="grid">
-      <div class="tile" id="get-mac">
-        <div class="t"><span class="ic"><svg width="18" height="18" viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9z"/></svg></span> Download desktop app</div>
-        <div class="d">Mac · Windows · Linux — the floating widget that pays you.</div>
+  <canvas data-silk aria-hidden="true"></canvas>
+  <div class="background-wash" aria-hidden="true"></div>
+  <div class="orb orb-one" aria-hidden="true"></div>
+  <div class="orb orb-two" aria-hidden="true"></div>
+
+  <main class="dashboard-shell" aria-label="PayParty dashboard">
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="PayParty home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name">PayParty</span>
+      </a>
+      <div class="account">
+        <div class="account-copy">
+          <span class="welcome">Welcome back</span>
+          <strong id="who">friend</strong>
+        </div>
+        <span class="avatar" id="avatar" aria-hidden="true">F</span>
+        <button class="icon-button" id="logout" type="button" aria-label="Log out" title="Log out">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3M15 4h3a3 3 0 013 3v10a3 3 0 01-3 3h-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
-      <div class="tile" id="get-ext">
-        <div class="t"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/></svg></span> Get Chrome extension</div>
-        <div class="d">Earn right in your browser — no install needed.</div>
+    </header>
+
+    <section class="balance-grid" aria-label="Balance summary">
+      <article class="balance-card">
+        <div class="card-glow" aria-hidden="true"></div>
+        <div class="balance-head">
+          <div>
+            <span class="eyebrow light">Available balance</span>
+            <div class="balance-amount" id="balance" aria-live="polite">$0.00</div>
+          </div>
+          <span class="live-pill"><i></i> Ready to cash out</span>
+        </div>
+        <div class="balance-bottom">
+          <div class="minimum-wrap">
+            <div class="minimum-copy">
+              <span id="cashout-progress-label">$0.00 of $5.00 minimum</span>
+              <strong id="cashout-progress-percent">0%</strong>
+            </div>
+            <div class="progress" role="progressbar" aria-label="Cash-out minimum progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <span id="cashout-progress"></span>
+            </div>
+          </div>
+          <button class="cashout-button" id="open-cashout" type="button" disabled>
+            <span>Cash out</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-5-5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </article>
+
+      <div class="stat-stack">
+        <article class="stat-card lifetime-card">
+          <div class="stat-icon money-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3v18m4-14.5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <span class="stat-label">Lifetime earnings</span>
+            <strong class="stat-value" id="lifetime">$0.00</strong>
+          </div>
+          <span class="trend">All time</span>
+        </article>
+        <article class="stat-card payout-card">
+          <div class="stat-icon clock-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <span class="stat-label">Latest cash-out</span>
+            <strong class="stat-value small" id="latest-payout">No requests yet</strong>
+          </div>
+          <span class="status-chip hidden" id="latest-status">Pending</span>
+        </article>
       </div>
+    </section>
+
+    <section class="content-grid">
+      <div class="main-column">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Keep earning</span>
+            <h1>Pick your party.</h1>
+          </div>
+          <span class="soft-note">Your balance syncs here</span>
+        </div>
+
+        <div class="action-grid">
+          <a class="action-card desktop-card" href="index.html#download">
+            <span class="action-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 21h8m-4-4v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            <span class="action-copy">
+              <strong>Desktop widget</strong>
+              <span>Earn while you game, study, or work.</span>
+            </span>
+            <span class="arrow" aria-hidden="true">↗</span>
+            <span class="platforms">macOS · Windows · Linux</span>
+          </a>
+          <a class="action-card extension-card" href="index.html#download">
+            <span class="action-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3h3v2.1a2.5 2.5 0 105 0V3H19a2 2 0 012 2v3h-2.1a2.5 2.5 0 100 5H21v4a2 2 0 01-2 2h-4v-2.1a2.5 2.5 0 10-5 0V19H5a2 2 0 01-2-2v-4h2.1a2.5 2.5 0 100-5H3V5a2 2 0 012-2h3z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="action-copy">
+              <strong>Chrome extension</strong>
+              <span>Turn everyday browsing into earnings.</span>
+            </span>
+            <span class="arrow" aria-hidden="true">↗</span>
+            <span class="platforms">Chrome · Brave · Edge</span>
+          </a>
+        </div>
+      </div>
+
+      <aside class="activity-card" aria-labelledby="activity-title">
+        <div class="activity-head">
+          <div>
+            <span class="eyebrow">Money moves</span>
+            <h2 id="activity-title">Recent activity</h2>
+          </div>
+          <button class="refresh-button" id="refresh" type="button" aria-label="Refresh activity" title="Refresh">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M6.1 8a7 7 0 0111.6-2.6L20 8m-16 8l2.3 2.6A7 7 0 0017.9 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="activity-list" id="activity-list" aria-live="polite">
+          <div class="activity-skeleton"><i></i><span></span><b></b></div>
+          <div class="activity-skeleton"><i></i><span></span><b></b></div>
+          <div class="activity-skeleton"><i></i><span></span><b></b></div>
+        </div>
+      </aside>
+    </section>
+
+    <footer class="dashboard-footer">
+      <span><i class="secure-dot"></i> Encrypted &amp; account-protected</span>
+      <span>Minimum cash-out: <b>$5.00</b></span>
+    </footer>
+  </main>
+
+  <div class="modal-backdrop" id="cashout-modal" role="dialog" aria-modal="true" aria-labelledby="cashout-title" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" id="close-cashout" type="button" aria-label="Close cash-out dialog">×</button>
+      <div class="modal-icon" aria-hidden="true">$</div>
+      <span class="eyebrow">Get paid</span>
+      <h2 id="cashout-title">Cash out your balance</h2>
+      <p class="modal-sub">Choose where the money should go. Requests are typically reviewed within 1–3 business days.</p>
+
+      <form id="cashout-form" novalidate>
+        <fieldset>
+          <legend>Payout method</legend>
+          <div class="method-grid">
+            <label class="method-option selected">
+              <input type="radio" name="method" value="paypal" checked>
+              <span class="method-logo paypal">P</span><strong>PayPal</strong><i></i>
+            </label>
+            <label class="method-option">
+              <input type="radio" name="method" value="venmo">
+              <span class="method-logo venmo">V</span><strong>Venmo</strong><i></i>
+            </label>
+            <label class="method-option">
+              <input type="radio" name="method" value="cash_app">
+              <span class="method-logo cashapp">$</span><strong>Cash App</strong><i></i>
+            </label>
+          </div>
+        </fieldset>
+
+        <label class="field-label" for="cashout-amount">Amount</label>
+        <div class="amount-field">
+          <span>$</span>
+          <input id="cashout-amount" name="amount" type="number" min="5" max="5000" step="0.01" inputmode="decimal" placeholder="5.00" required>
+          <button id="cashout-max" type="button">Use max</button>
+        </div>
+        <div class="field-meta"><span>Minimum $5.00</span><span>Available: <b id="modal-available">$0.00</b></span></div>
+
+        <label class="field-label" id="destination-label" for="cashout-destination">PayPal email</label>
+        <input class="text-field" id="cashout-destination" name="destination" type="email" autocomplete="email" placeholder="you@example.com" maxlength="120" required>
+
+        <div class="cashout-summary">
+          <span>You’ll request</span>
+          <strong id="cashout-summary-amount">$0.00</strong>
+          <small>No PayParty cash-out fee</small>
+        </div>
+
+        <p class="form-message" id="cashout-message" role="alert"></p>
+        <button class="submit-cashout" id="submit-cashout" type="submit">
+          <span>Request cash out</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-5-5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </form>
     </div>
   </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="assets/silk.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
-  <script>
-  (function(){
-    const $ = (s) => document.querySelector(s);
-    const money = (n) => '$' + (Math.round((n || 0) * 100) / 100).toFixed(2);
-    $('#get-mac').onclick = () => { location.href = 'index.html#download'; };
-    $('#get-ext').onclick = () => { location.href = 'index.html#download'; }; // → Chrome Web Store URL once published
-
-    if (!window.supabase || !window.supabase.createClient) return;
-    const KEY = window.PAYPARTY_SUPABASE_ANON_KEY || '';
-    if (!KEY || KEY.indexOf('PASTE_') === 0) { location.replace('login.html'); return; }
-    const sb = window.supabase.createClient(window.PAYPARTY_SUPABASE_URL, KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
-
-    $('#logout').onclick = async () => { await sb.auth.signOut(); location.replace('login.html'); };
-
-    (async function(){
-      const { data: { session } } = await sb.auth.getSession();
-      if (!session) { location.replace('login.html'); return; }
-      const user = session.user;
-      $('#who').textContent = (user.email || (user.user_metadata && user.user_metadata.name) || 'friend').split('@')[0];
-      try {
-        const { data: profile } = await sb.from('profiles').select('balance,lifetime').eq('id', user.id).maybeSingle();
-        $('#balance').textContent = money(profile && profile.balance);
-        $('#lifetime').textContent = money(profile && profile.lifetime) + ' earned all-time';
-      } catch (e) { /* table not created yet → shows $0.00 */ }
-    })();
-  })();
-  </script>
+  <script src="dashboard.js"></script>
 </body>
 </html>
