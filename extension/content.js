@@ -33,10 +33,17 @@
     + '@keyframes b{0%,100%{opacity:.5}50%{opacity:1}}'
     + '</style><button class="pp" title="Open your PayParty earning widget"><img alt=""><span>Earn</span><i></i></button>';
   (document.documentElement || document.body).appendChild(host);
-  root.querySelector('img').src = chrome.runtime.getURL('icons/icon128.png');
 
-  function sync() { chrome.storage.local.get('enabled').then(function (s) { host.style.display = s.enabled === false ? 'none' : 'block'; }); }
-  chrome.storage.onChanged.addListener(function (c, a) { if (a === 'local' && c.enabled) sync(); });
+  // chrome.* calls throw "Extension context invalidated" in tabs that were open
+  // when the extension reloads/updates. Guard every call so old tabs stay quiet.
+  function alive() { try { return !!(chrome.runtime && chrome.runtime.id); } catch (e) { return false; } }
+  try { root.querySelector('img').src = chrome.runtime.getURL('icons/icon128.png'); } catch (e) {}
+
+  function sync() {
+    if (!alive()) return;
+    try { chrome.storage.local.get('enabled').then(function (s) { host.style.display = s.enabled === false ? 'none' : 'block'; }, function () {}); } catch (e) {}
+  }
+  try { chrome.storage.onChanged.addListener(function (c, a) { if (a === 'local' && c.enabled) sync(); }); } catch (e) {}
   sync();
 
   root.querySelector('.pp').addEventListener('click', launch);
@@ -66,14 +73,16 @@
 
   // mirror the widget's session counter into chrome.storage so the popup matches
   function onEarn(e) {
-    if (!e || !e.data || e.data.type !== 'pp:earn') return;
+    if (!e || !e.data || e.data.type !== 'pp:earn' || !alive()) return;
     var a = Number(e.data.amount) || 0;
     if (a <= 0) return;
-    chrome.storage.local.get(['balance', 'lifetime']).then(function (s) {
-      chrome.storage.local.set({
-        balance: Math.round(((s.balance || 0) + a) * 100) / 100,
-        lifetime: Math.round(((s.lifetime || 0) + a) * 100) / 100
-      });
-    });
+    try {
+      chrome.storage.local.get(['balance', 'lifetime']).then(function (s) {
+        chrome.storage.local.set({
+          balance: Math.round(((s.balance || 0) + a) * 100) / 100,
+          lifetime: Math.round(((s.lifetime || 0) + a) * 100) / 100
+        });
+      }, function () {});
+    } catch (e2) {}
   }
 })();
