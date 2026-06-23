@@ -54,7 +54,9 @@
     try {
       if (window.documentPictureInPicture && documentPictureInPicture.requestWindow) {
         pip = await documentPictureInPicture.requestWindow({ width: W, height: H }); // always-on-top
-        pip.document.body.style.cssText = 'margin:0;background:transparent';
+        // html+body MUST be full height or the iframe collapses (white gap + wrong tier)
+        pip.document.documentElement.style.height = '100%';
+        pip.document.body.style.cssText = 'margin:0;height:100%;background:transparent';
         var f = pip.document.createElement('iframe');
         f.src = WIDGET_URL;
         f.allow = 'autoplay';

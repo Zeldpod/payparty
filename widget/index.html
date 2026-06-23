@@ -61,14 +61,14 @@
   'use strict';
   // ---- Adsterra units (live on the verified domain payparty.fun) ----
   var SMARTLINK = 'https://www.effectivecpmnetwork.com/nnybe0jx?key=45260f335c95f1d9a8ccca157fbffa03';
+  // Each banner is a REAL same-origin page on payparty.fun (NOT srcdoc) so
+  // Adsterra's invoke.js sees the verified hostname and actually fills.
   var BANNERS = {
-    compact:  { key: '15ab048c5ac3afeaf4ca1da733ba9afa', w: 320, h: 50 },
-    standard: { key: '89358ac0d129f8fc57f65e3fc8a413ab', w: 300, h: 250 },
-    large:    { key: '89358ac0d129f8fc57f65e3fc8a413ab', w: 300, h: 250 }
+    compact:  { page: 'ad-320.html', w: 320, h: 50 },
+    standard: { page: 'ad-300.html', w: 300, h: 250 },
+    large:    { page: 'ad-300.html', w: 300, h: 250 }
   };
   var SOCIALBAR_SRC = 'https://pl29853227.effectivecpmnetwork.com/59/05/f8/5905f8858a836a832aaa98f8ca6b0851.js';
-  var NATIVE_SRC = 'https://pl29853228.effectivecpmnetwork.com/4f6c85b2e2fa7e31f36c8983c82f1bdf/invoke.js';
-  var NATIVE_CONTAINER = 'container-4f6c85b2e2fa7e31f36c8983c82f1bdf';
   var RATE = { compact: 0.02, standard: 0.05, large: 0.15 };
 
   // host=app (desktop transparent window) skips the page-level floating units
@@ -79,13 +79,6 @@
   var $ = function (id) { return document.getElementById(id); };
   var tier = null, socialLoaded = false, nativeLoaded = false;
 
-  function bannerSrcdoc(b) {
-    var o = JSON.stringify({ key: b.key, format: 'iframe', height: b.h, width: b.w, params: {} });
-    return '<!doctype html><meta charset=utf-8>'
-      + '<style>html,body{margin:0;height:100%;display:flex;align-items:center;justify-content:center;background:transparent;overflow:hidden}</style>'
-      + '<body><script>atOptions=' + o + '<\/script>'
-      + '<script src="https://www.highperformanceformat.com/' + b.key + '/invoke.js"><\/script>';
-  }
   function mountBanner(t) {
     var b = BANNERS[t] || BANNERS.standard;
     var slot = $('ad-banner');
@@ -94,18 +87,19 @@
     f.title = 'Sponsored ad';
     f.setAttribute('scrolling', 'no');
     f.width = b.w; f.height = b.h;
+    f.src = b.page;
     f.style.cssText = 'width:' + b.w + 'px;height:' + b.h + 'px';
-    f.srcdoc = bannerSrcdoc(b);
     slot.appendChild(f);
     // reveal (hide the loader) shortly after the ad frame is in the DOM
-    setTimeout(function () { $('creative').classList.add('has-ad'); }, 1200);
+    setTimeout(function () { $('creative').classList.add('has-ad'); }, 1400);
   }
   function loadNative() {
     if (nativeLoaded || !RICH_OK) return; nativeLoaded = true;
-    var wrap = $('ad-native');
-    var div = document.createElement('div'); div.id = NATIVE_CONTAINER; wrap.appendChild(div);
-    var s = document.createElement('script'); s.async = true; s.setAttribute('data-cfasync', 'false');
-    s.src = NATIVE_SRC; wrap.appendChild(s);
+    var f = document.createElement('iframe');
+    f.title = 'Sponsored';
+    f.src = 'ad-native.html';
+    f.style.cssText = 'border:0;width:100%;height:250px;display:block;border-radius:14px';
+    $('ad-native').appendChild(f);
   }
   function loadSocial() {
     if (socialLoaded || !RICH_OK) return; socialLoaded = true;
