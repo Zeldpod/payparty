@@ -42,11 +42,12 @@
       <article class="balance-card">
         <div class="card-glow" aria-hidden="true"></div>
         <div class="balance-head">
-          <div>
+          <div class="balance-head-copy">
             <span class="eyebrow light">Available balance</span>
             <div class="balance-amount" id="balance" aria-live="polite">$0.00</div>
+            <span class="balance-hint">Earnings land here in real time</span>
           </div>
-          <span class="live-pill"><i></i> Ready to cash out</span>
+          <span class="live-pill"><i></i> Live</span>
         </div>
         <div class="balance-bottom">
           <div class="minimum-wrap">
@@ -62,6 +63,10 @@
             <span>Cash out</span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-5-5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
+        </div>
+        <div class="balance-note" aria-hidden="true">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 2l8 4v6c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V6l8-4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Payouts are reviewed before they send</span>
         </div>
       </article>
 
@@ -94,9 +99,9 @@
         <div class="section-heading">
           <div>
             <span class="eyebrow">Keep earning</span>
-            <h1>Pick your party.</h1>
+            <h1>Pick how you earn.</h1>
           </div>
-          <span class="soft-note">Your balance syncs here</span>
+          <span class="soft-note">Balance syncs automatically</span>
         </div>
 
         <button class="launch-card" id="launch-widget" type="button">
@@ -105,7 +110,7 @@
           </span>
           <span class="launch-copy">
             <strong>Launch earning widget</strong>
-            <span>Open the widget right here in your browser and start banking — no install needed.</span>
+            <span>Open it right here in your browser and get paid for screen time — no install needed.</span>
           </span>
           <span class="launch-go" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-5-5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -119,7 +124,7 @@
             </span>
             <span class="action-copy">
               <strong>Desktop widget</strong>
-              <span>Earn while you game, study, or work.</span>
+              <span>Get paid while you game, study, or work.</span>
             </span>
             <span class="arrow" aria-hidden="true">↗</span>
             <span class="platforms">macOS · Windows · Linux</span>
@@ -158,7 +163,7 @@
 
     <footer class="dashboard-footer">
       <span><i class="secure-dot"></i> Encrypted &amp; account-protected</span>
-      <span>Minimum cash-out: <b>$5.00</b></span>
+      <span>Cash out at <b>$5.00</b> · payouts reviewed before they send</span>
     </footer>
   </main>
 
@@ -203,7 +208,7 @@
         <div class="cashout-summary">
           <span>You’ll request</span>
           <strong id="cashout-summary-amount">$0.00</strong>
-          <small>No PayParty cash-out fee</small>
+          <small>No PayParty cash-out fee · reviewed before it sends</small>
         </div>
 
         <p class="form-message" id="cashout-message" role="alert"></p>

@@ -12,7 +12,7 @@
 (function () {
   var SUPABASE_URL = 'https://fcpetkipzuzbuzidvsjz.supabase.co';
   var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjcGV0a2lwenV6YnV6aWR2c2p6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MjMyMzksImV4cCI6MjA5NjQ5OTIzOX0.3BhIEcJwkjCLCZ1HgMDzXaGrmLdWcKUU54RE0wwSOvo';
-  var WEB_LOGIN = 'https://www.payparty.fun/login';
+  var WEB_LOGIN = 'https://www.payparty.fun/login.html';
 
   function authHeaders() {
     return { apikey: ANON_KEY, 'Content-Type': 'application/json' };
@@ -120,6 +120,40 @@
 
   function signOut() { return clearSession(); }
 
+  // Real Google sign-in via chrome.identity + Supabase OAuth (implicit/hash flow).
+  // SETUP (one time): in Supabase -> Authentication -> URL Configuration, add the
+  // extension's redirect URL (the value of chrome.identity.getRedirectURL(),
+  // i.e. https://<extension-id>.chromiumapp.org/) to the Redirect URLs allowlist,
+  // and enable the Google provider. Requires the "identity" manifest permission.
+  function signInWithGoogle() {
+    return new Promise(function (resolve, reject) {
+      if (!chrome.identity || !chrome.identity.launchWebAuthFlow) {
+        reject(new Error('Google sign-in is not available here — use email instead.'));
+        return;
+      }
+      var redirectTo = chrome.identity.getRedirectURL();
+      var authUrl = SUPABASE_URL + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(redirectTo);
+      chrome.identity.launchWebAuthFlow({ url: authUrl, interactive: true }, function (redirectUrl) {
+        if (chrome.runtime.lastError || !redirectUrl) {
+          reject(new Error((chrome.runtime.lastError && chrome.runtime.lastError.message) || 'Google sign-in was cancelled.'));
+          return;
+        }
+        var frag = redirectUrl.split('#')[1] || redirectUrl.split('?')[1] || '';
+        var p = new URLSearchParams(frag);
+        var access_token = p.get('access_token');
+        if (!access_token) { reject(new Error(p.get('error_description') || 'Google sign-in failed.')); return; }
+        var refresh_token = p.get('refresh_token');
+        var expires_in = Number(p.get('expires_in')) || 3600;
+        fetch(SUPABASE_URL + '/auth/v1/user', { headers: { apikey: ANON_KEY, Authorization: 'Bearer ' + access_token } })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (user) {
+            resolve(setSession(toSession({ access_token: access_token, refresh_token: refresh_token, expires_in: expires_in, user: user })));
+          })
+          .catch(reject);
+      });
+    });
+  }
+
   window.PPAuth = {
     SUPABASE_URL: SUPABASE_URL,
     ANON_KEY: ANON_KEY,
@@ -127,6 +161,7 @@
     getSession: getSession,
     signIn: signIn,
     signUp: signUp,
+    signInWithGoogle: signInWithGoogle,
     refresh: refresh,
     getValidToken: getValidToken,
     fetchBalance: fetchBalance,

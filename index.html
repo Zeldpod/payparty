@@ -4,11 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="admaven-placement" content="BqTa5rjn4">
-<title>PayParty — Get paid to do nothing</title>
+<title>PayParty — Get paid for screen time</title>
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="description" content="PayParty is a tiny floating widget for your desktop. It pays you real money while you game, watch, study, or work. Your screen. Your rules. Free money.">
+<meta name="description" content="PayParty is a tiny floating widget for your desktop that pays you for screen time. Earn while you game, watch, study, or work — cash out at $5 to Cash App, Venmo, or PayPal. Payouts reviewed before they send.">
+<meta property="og:title" content="PayParty — Get paid for screen time">
+<meta property="og:description" content="A tiny desktop widget that earns real money while you do whatever. Cash out at $5. Payouts reviewed before they send.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.payparty.fun">
+<meta name="theme-color" content="#6C4DFF">
+<link rel="canonical" href="https://www.payparty.fun">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Monda:wght@400;700&display=swap" rel="stylesheet">
@@ -50,6 +56,11 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
+/* fixed-nav offset so anchored sections aren't hidden under the bar */
+section[id],header[id]{scroll-margin-top:90px}
+/* crisp, on-brand focus ring for keyboard users (premium a11y polish) */
+:focus-visible{outline:none;box-shadow:0 0 0 3px #fff,0 0 0 5px var(--purple)}
+a:focus-visible,button:focus-visible{border-radius:12px}
 body{
   background:var(--bg);color:var(--ink);overflow-x:hidden;
   font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,sans-serif;
@@ -60,7 +71,9 @@ a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
 .disp{font-family:'Bricolage Grotesque',sans-serif}
 .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
-.eyebrow{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--purple)}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--purple)}
+.eyebrow::before{content:"";width:18px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--purple-lt),var(--purple));opacity:.7}
+.head .eyebrow::before{display:none}
 .grad-text{background:linear-gradient(100deg,var(--purple-lt),var(--purple-dk));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .rotor{white-space:nowrap}
 .caret{display:inline-block;width:.05em;height:.74em;margin-left:.07em;border-radius:3px;background:var(--purple-dk);vertical-align:-.03em;animation:pp-blink 1.05s steps(1,end) infinite}
@@ -175,18 +188,18 @@ header.hero>.wrap{max-width:1320px}
 .cashout-big{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(36px,4.8vw,72px);letter-spacing:-.04em;line-height:.92}
 .cashout-big .word{display:block;background:linear-gradient(100deg,var(--purple-lt),var(--purple-dk));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .cashout-big .sub{display:block;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:14px;color:var(--ink-soft);letter-spacing:0;margin-top:10px;-webkit-text-fill-color:var(--ink-soft)}
-.pay-icons{display:flex;align-items:flex-end;justify-content:center;gap:14px;padding-bottom:6px}
-.pay-icons img{width:clamp(72px,7vw,96px);height:clamp(72px,7vw,96px);border-radius:22px;object-fit:cover;box-shadow:0 16px 36px rgba(40,20,90,.24);transition:transform .22s cubic-bezier(.34,1.56,.64,1)}
-.pay-icons img:nth-child(1){transform:rotate(-8deg) translateY(4px)}
-.pay-icons img:nth-child(2){transform:rotate(5deg) translateY(-2px)}
-.pay-icons img:nth-child(3){transform:rotate(-3deg) translateY(6px)}
-.pay-icons img:hover{transform:translateY(-8px) rotate(0) scale(1.05)}
+.pay-icons{display:flex;align-items:center;justify-content:center;gap:clamp(22px,3vw,40px);padding-bottom:6px}
+.pay-icons img{width:clamp(62px,6vw,82px);height:clamp(62px,6vw,82px);border-radius:20px;object-fit:cover;box-shadow:0 16px 36px rgba(40,20,90,.22);transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s}
+.pay-icons img:nth-child(1){transform:rotate(-7deg)}
+.pay-icons img:nth-child(2){transform:translateY(-9px) scale(1.04)}
+.pay-icons img:nth-child(3){transform:rotate(7deg)}
+.pay-icons img:hover{transform:translateY(-10px) rotate(0) scale(1.08);box-shadow:0 26px 52px rgba(40,20,90,.32)}
 .ext-wrap{position:relative;display:inline-flex}
-.ext-arrow{position:absolute;left:calc(100% - 2px);top:38%;width:auto;height:clamp(76px,7.5vw,104px);pointer-events:none;transform:translateY(-4%);opacity:1}
 .laptop-wrap{position:relative}
-.try-me{position:absolute;top:-58px;right:20%;display:flex;flex-direction:column;align-items:center;gap:0;pointer-events:none;
-  font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(20px,1.8vw,28px);letter-spacing:.06em;color:var(--ink);transform:rotate(5deg);white-space:nowrap;z-index:4}
-.try-me img{width:auto;height:38px;margin-top:2px;margin-right:18px;display:block}
+/* "try me" tag sits above the live widget and bobs to invite interaction */
+.try-me{position:absolute;top:-30px;right:11%;display:flex;align-items:flex-end;gap:6px;pointer-events:none;
+  font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(18px,1.6vw,25px);letter-spacing:.04em;color:var(--purple-dk);transform:rotate(3deg);white-space:nowrap;z-index:4;animation:pp-bob 3s ease-in-out infinite}
+.try-me img{width:auto;height:30px;display:block;transform:rotate(10deg) scaleX(-1);opacity:.8}
 
 /* ---- MacBook (real product image) ---- */
 .laptop{position:relative;width:100%;max-width:800px;margin:0 0 0 auto;animation:pp-floatslow 11s ease-in-out infinite}
@@ -362,6 +375,7 @@ section{position:relative}
 .final .sub{margin:24px auto 0;max-width:46ch;font-size:18px;color:var(--ink-soft);line-height:1.5}
 .final .glow{position:absolute;left:50%;top:30%;transform:translateX(-50%);width:680px;height:380px;border-radius:50%;filter:blur(60px);pointer-events:none;
   background:radial-gradient(circle,rgba(108,77,255,.3),transparent 68%)}
+.hero-fine{font-size:13.5px;font-weight:600;color:var(--ink-faint);letter-spacing:.01em}
 
 /* footer */
 footer{padding:40px 0 60px;background:var(--bg-lav)}
@@ -395,6 +409,24 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
 @media(max-width:560px){
   .steps,.safe,.bento{grid-template-columns:1fr}
   .sec{padding:84px 0}
+  .wrap{padding:0 20px}
+  .btn-lg{font-size:16px;padding:16px 24px}
+  .hero-ctas{flex-direction:column;align-items:stretch}
+  .hero-ctas .btn-lg{width:100%;justify-content:center}
+  .hero-ctas .ext-wrap{display:flex}
+  .hero-ctas .ext-wrap .btn-lg{width:100%}
+  .hero-trust{justify-content:center;gap:8px 16px}
+  .cashout-big .sub{font-size:13px}
+  .pay-icons img{width:64px;height:64px;border-radius:18px}
+  .paychips,.hero-ctas{justify-content:center}
+  .qa button{font-size:16px;padding:18px 18px}
+  .bigcard{padding:60px 24px}
+  .foot{flex-direction:column;text-align:center;gap:14px}
+  .foot .links{justify-content:center;flex-wrap:wrap}
+}
+@media(max-width:380px){
+  .sticker{font-size:12.5px;padding:7px 11px}
+  .pay-icons{gap:10px}
 }
 </style>
 <script>
@@ -454,15 +486,15 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
     <!-- LEFT: copy -->
     <div class="hero-copy">
       <div data-reveal style="display:flex;gap:10px;flex-wrap:wrap">
-        <span class="sticker pink" style="animation:pp-wob 5s ease-in-out infinite">💸 literally free money</span>
-        <span class="sticker" style="transform:rotate(2deg)">⚡ Cash App for screen space</span>
+        <span class="sticker pink" style="animation:pp-wob 5s ease-in-out infinite">💸 Get paid for screen time</span>
+        <span class="sticker" style="transform:rotate(2deg)">⚡ Cash out at $5</span>
       </div>
 
-      <h1 data-reveal>Get paid to<br><span class="rotor"><span class="grad-text" data-type>do anything.</span><span class="caret" aria-hidden="true"></span></span></h1>
+      <h1 data-reveal>Get paid while<br>you<span class="rotor"> <span class="grad-text" data-type>do anything.</span><span class="caret" aria-hidden="true"></span></span></h1>
 
       <p class="sub" data-reveal>Drop a tiny glassy widget on your desktop. It quietly earns
-        <b style="color:var(--green-dk)">real cash</b> while you game, watch Netflix, study, or work.
-        You're already on your screen — might as well get paid for it. 🤷</p>
+        <b style="color:var(--green-dk)">real money</b> while you game, watch, study, or work — you're
+        already on your screen, so it might as well pay you. Cash out at $5; every payout is reviewed before it sends.</p>
 
       <div class="hero-ctas" data-reveal>
         <a href="#download" class="btn btn-lg btn-mac" data-magnetic data-rain data-os-btn>
@@ -473,7 +505,6 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
           <a href="#download" class="btn btn-lg btn-ghost" id="get-ext">
             <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/></svg> Get extension
           </a>
-          <img class="ext-arrow" src="assets/arrow-curvy.png" alt="" aria-hidden="true" draggable="false">
         </span>
       </div>
 
@@ -535,8 +566,8 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
   <div class="wrap">
     <div class="head" data-reveal>
       <div class="eyebrow">stupidly simple</div>
-      <h2>Three taps. Then it just<br><span class="grad-text">prints money.</span></h2>
-      <p>No weird setup. No points. No credit card. No reason not to.</p>
+      <h2>Set it up once. Then it<br>earns <span class="grad-text">in the background.</span></h2>
+      <p>No weird setup, no points to convert, no credit card. Install it and get on with your day.</p>
     </div>
     <div class="steps">
       <div class="step" data-reveal data-tilt>
@@ -554,8 +585,8 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
       <div class="step green" data-reveal data-tilt>
         <span class="n" style="color:rgba(0,200,83,.14)">3</span>
         <div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-        <h3>Get paid. AFK.</h3>
-        <p>Sponsored cards run quietly while your screen's on. Request a cash-out once you hit the $5 minimum.</p>
+        <h3>Earn while you go</h3>
+        <p>Sponsored cards run quietly while your screen's on. Request a cash-out once you hit the $5 minimum — every payout is reviewed before it sends.</p>
       </div>
     </div>
   </div>
@@ -567,35 +598,35 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
     <div class="head" data-reveal>
       <div class="eyebrow">the fun part</div>
       <h2>Earn doing what you<br>already do <span class="grad-text">all day.</span></h2>
-      <p>The widget floats on top no matter what app you're in. So the bag never stops. 💼</p>
+      <p>The widget floats on top no matter what app you're in — so it keeps earning whatever you're up to.</p>
     </div>
     <div class="bento">
       <div class="cell feature" data-reveal data-tilt>
         <div class="blob"></div>
         <div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h4M8 10v4"/><circle cx="15" cy="11" r="1"/><circle cx="18" cy="13" r="1"/><rect x="2" y="6" width="20" height="12" rx="4"/></svg></div>
         <h3>Gaming 🎮</h3>
-        <p>Ranked grind, side income ON. The widget chills in the corner and keeps banking while you cook.</p>
-        <div class="rate">📈 avg. $0.03/min</div>
+        <p>Ranked grind with side income on. The widget sits in the corner and keeps earning while you play — no tabbing out, no distractions.</p>
+        <div class="rate">📈 earns while your screen is on</div>
       </div>
       <div class="cell" data-reveal data-tilt>
         <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="3"/><path d="m10 9 4 2.5L10 14z" fill="currentColor"/></svg></div>
         <h3>Watching stuff 📺</h3>
-        <p>Your watch-later list now has a side hustle.</p>
+        <p>Your watch-later list earns while it plays.</p>
       </div>
       <div class="cell" data-reveal data-tilt>
         <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h11v16H6a2 2 0 0 0-2 2z"/><path d="M17 3h2a1 1 0 0 1 1 1v15"/></svg></div>
         <h3>Studying 📚</h3>
-        <p>Homework, but slightly less broke.</p>
+        <p>Long study sessions, a little payback.</p>
       </div>
       <div class="cell" data-reveal data-tilt>
         <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg></div>
         <h3>Working 💻</h3>
-        <p>Get paid twice for the same screen time.</p>
+        <p>A little extra on top of your already-on screen.</p>
       </div>
       <div class="cell" data-reveal data-tilt>
         <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></div>
-        <h3>AFK / asleep 😴</h3>
-        <p>Screen on. Widget on. Earnings on. You: gone.</p>
+        <h3>Idle time 😌</h3>
+        <p>Screen on, widget on. It keeps earning during the in-between moments.</p>
       </div>
     </div>
   </div>
@@ -605,9 +636,9 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
 <section class="sec sec-lav" id="safe">
   <div class="wrap">
     <div class="head" data-reveal>
-      <span class="sticker green" style="margin-bottom:18px;transform:rotate(-2deg)">🛡️ no catch, we promise</span>
-      <h2>"Okay but… <span class="grad-text">is this a scam?</span>"</h2>
-      <p>Fair question. Free money sounds fake. Here's exactly what PayParty does — and the long list of stuff it <b style="color:var(--ink)">never</b> touches.</p>
+      <span class="sticker green" style="margin-bottom:18px;transform:rotate(-2deg)">🛡️ built to be transparent</span>
+      <h2>"Okay but… <span class="grad-text">how does this work?</span>"</h2>
+      <p>Fair question — and a good one to ask. Here's exactly what PayParty does, and the long list of things it <b style="color:var(--ink)">never</b> touches.</p>
     </div>
     <div class="safe">
       <div class="it" data-reveal>
@@ -627,8 +658,8 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
         <h4>No selling your data</h4><p>Sponsors pay for the screen space — not for you.</p>
       </div>
     </div>
-    <p class="howmoney" data-reveal><b>So how's it free money?</b> Brands pay to put a tiny sponsored card in front of real humans.
-      PayParty rents them that little corner of your screen — and splits the cash with you. That's the whole model. No gotchas, no subscriptions, no "complete 47 offers."</p>
+    <p class="howmoney" data-reveal><b>So where does the money come from?</b> Brands pay to put a tiny sponsored card in front of real people.
+      PayParty rents them that little corner of your screen and shares the revenue with you. That's the whole model — no subscriptions, no surveys, no "complete 47 offers."</p>
   </div>
 </section>
 
@@ -701,7 +732,7 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
       <div class="b1"></div><div class="b2"></div>
       <div class="lab">paid out to the party so far</div>
       <div class="bignum" data-bigcounter>$2,485,018</div>
-      <p class="note">And counting — every single second — while people do completely normal computer stuff. 🪩</p>
+      <p class="note">And counting — every payout reviewed and sent to a real person, for doing completely normal computer stuff. 🪩</p>
     </div>
   </div>
 </section>
@@ -719,15 +750,15 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
   <div class="glow"></div>
   <div class="wrap">
     <span class="sticker yellow" data-reveal style="margin-bottom:22px;animation:pp-wob 4s ease-in-out infinite">🎉 join the party</span>
-    <h2 data-reveal>Stop giving your screen away <span class="grad-text">for free.</span></h2>
-    <p class="sub" data-reveal>Download PayParty, drop the widget, and start stacking cash while your screen's already on.</p>
+    <h2 data-reveal>Your screen's already on. <span class="grad-text">Get paid for it.</span></h2>
+    <p class="sub" data-reveal>Download PayParty, drop the widget anywhere, and start earning during the screen time you'd spend anyway. Cash out at $5.</p>
     <div data-reveal style="margin-top:34px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
       <a href="#download" class="btn btn-lg btn-mac" data-magnetic data-rain data-os-btn>
         <span data-os-icon><svg width="19" height="19" viewBox="0 0 384 512" fill="#fff"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg></span>
-        <span data-os-label>Get PayParty free for Mac</span>
+        <span data-os-label>Download PayParty for Mac</span>
       </a>
     </div>
-    <p class="hero-fine" data-reveal style="margin-top:18px">Free forever · No credit card · $5 cash-out minimum (payouts reviewed)</p>
+    <p class="hero-fine" data-reveal style="margin-top:18px">Free to install · No credit card · $5 cash-out minimum · Payouts reviewed before they send</p>
   </div>
 </section>
 
@@ -736,7 +767,7 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
     <div class="foot">
       <a href="#top" class="brand"><span class="mark" style="width:30px;height:30px;font-size:16px">P</span><span class="name" style="font-size:17px">PayParty</span></a>
       <div class="links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Support</a><a href="#">X / Twitter</a></div>
-      <div class="cr">© 2026 PayParty, Inc. · Made for people who like free money</div>
+      <div class="cr">© 2026 PayParty, Inc. · Get paid for screen time</div>
     </div>
   </div>
 </footer>
@@ -851,7 +882,7 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
     var LINUX='<svg width="16" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139zm.529 3.405h.013c.213 0 .396.062.584.198.19.135.33.332.438.533.105.259.158.459.166.724 0-.02.006-.04.006-.06v.105a.086.086 0 01-.004-.021l-.004-.024a1.807 1.807 0 01-.15.706.953.953 0 01-.213.335.71.71 0 00-.088-.042c-.104-.045-.198-.064-.284-.133a1.312 1.312 0 00-.22-.066c.05-.06.146-.133.183-.198.053-.128.082-.264.088-.402v-.02a1.21 1.21 0 00-.061-.4c-.045-.134-.101-.2-.183-.333-.084-.066-.167-.132-.267-.132h-.016c-.093 0-.176.03-.262.132a.8.8 0 00-.205.334 1.18 1.18 0 00-.09.4v.019c.002.089.008.179.02.267-.193-.067-.438-.135-.607-.202a1.635 1.635 0 01-.018-.2v-.02a1.772 1.772 0 01.15-.768c.082-.22.232-.406.43-.533a.985.985 0 01.594-.2zm-2.962.059h.036c.142 0 .27.048.399.135.146.129.264.288.344.465.09.199.14.4.153.667v.004c.007.134.006.2-.002.266v.08c-.03.007-.056.018-.083.024-.152.055-.274.135-.393.2.012-.09.013-.18.003-.267v-.015c-.012-.133-.04-.2-.082-.333a.613.613 0 00-.166-.267.248.248 0 00-.183-.064h-.021c-.071.006-.13.04-.186.132a.552.552 0 00-.12.27.944.944 0 00-.023.33v.015c.012.135.037.2.08.334.046.134.098.2.166.268.01.009.02.018.034.024-.07.057-.117.07-.176.136a.304.304 0 01-.131.068 2.62 2.62 0 01-.275-.402 1.772 1.772 0 01-.155-.667 1.759 1.759 0 01.08-.668 1.43 1.43 0 01.283-.535c.128-.133.26-.2.418-.2zm1.37 1.706c.332 0 .733.065 1.216.399.293.2.523.269 1.052.468h.003c.255.136.405.266.478.399v-.131a.571.571 0 01.016.47c-.123.31-.516.643-1.063.842v.002c-.268.135-.501.333-.775.465-.276.135-.588.292-1.012.267a1.139 1.139 0 01-.448-.067 3.566 3.566 0 01-.322-.198c-.195-.135-.363-.332-.612-.465v-.005h-.005c-.4-.246-.616-.512-.686-.71-.07-.268-.005-.47.193-.6.224-.135.38-.271.483-.336.104-.074.143-.102.176-.131h.002v-.003c.169-.202.436-.47.839-.601.139-.036.294-.065.466-.065zm2.8 2.142c.358 1.417 1.196 3.475 1.735 4.473.286.534.855 1.659 1.102 3.024.156-.005.33.018.513.064.646-1.671-.546-3.467-1.089-3.966-.22-.2-.232-.335-.123-.335.59.534 1.365 1.572 1.646 2.757.13.535.16 1.104.021 1.67.067.028.135.06.205.067 1.032.534 1.413.938 1.23 1.537v-.043c-.06-.003-.12 0-.18 0h-.016c.151-.467-.182-.825-1.065-1.224-.915-.4-1.646-.336-1.77.465-.008.043-.013.066-.018.135-.068.023-.139.053-.209.064-.43.268-.662.669-.793 1.187-.13.533-.17 1.156-.205 1.869v.003c-.02.334-.17.838-.319 1.35-1.5 1.072-3.58 1.538-5.348.334a2.645 2.645 0 00-.402-.533 1.45 1.45 0 00-.275-.333c.182 0 .338-.03.465-.067a.615.615 0 00.314-.334c.108-.267 0-.697-.345-1.163-.345-.467-.931-.995-1.788-1.521-.63-.4-.986-.87-1.15-1.396-.165-.534-.143-1.085-.015-1.645.245-1.07.873-2.11 1.274-2.763.107-.065.037.135-.408.974-.396.751-1.14 2.497-.122 3.854a8.123 8.123 0 01.647-2.876c.564-1.278 1.743-3.504 1.836-5.268.048.036.217.135.289.202.218.133.38.333.59.465.21.201.477.335.876.335.039.003.075.006.11.006.412 0 .73-.134.997-.268.29-.134.52-.334.74-.4h.005c.467-.135.835-.402 1.044-.7zm2.185 8.958c.037.6.343 1.245.882 1.377.588.134 1.434-.333 1.791-.765l.211-.01c.315-.007.577.01.847.268l.003.003c.208.199.305.53.391.876.085.4.154.78.409 1.066.486.527.645.906.636 1.14l.003-.007v.018l-.003-.012c-.015.262-.185.396-.498.595-.63.401-1.746.712-2.457 1.57-.618.737-1.37 1.14-2.036 1.191-.664.053-1.237-.2-1.574-.898l-.005-.003c-.21-.4-.12-1.025.056-1.69.176-.668.428-1.344.463-1.897.037-.714.076-1.335.195-1.814.12-.465.308-.797.641-.984l.045-.022zm-10.814.049h.01c.053 0 .105.005.157.014.376.055.706.333 1.023.752l.91 1.664.003.003c.243.533.754 1.064 1.189 1.637.434.598.77 1.131.729 1.57v.006c-.057.744-.48 1.148-1.125 1.294-.645.135-1.52.002-2.395-.464-.968-.536-2.118-.469-2.857-.602-.369-.066-.61-.2-.723-.4-.11-.2-.113-.602.123-1.23v-.004l.002-.003c.117-.334.03-.752-.027-1.118-.055-.401-.083-.71.043-.94.16-.334.396-.4.69-.533.294-.135.64-.202.915-.47h.002v-.002c.256-.268.445-.601.668-.838.19-.201.38-.336.663-.336zm7.159-9.074c-.435.201-.945.535-1.488.535-.542 0-.97-.267-1.28-.466-.154-.134-.28-.268-.373-.335-.164-.134-.144-.333-.074-.333.109.016.129.134.199.2.096.066.215.2.36.333.292.2.68.467 1.167.467.485 0 1.053-.267 1.398-.466.195-.135.445-.334.648-.467.156-.136.149-.267.279-.267.128.016.034.134-.147.332a8.097 8.097 0 01-.69.468zm-1.082-1.583V5.64c-.006-.02.013-.042.029-.05.074-.043.18-.027.26.004.063 0 .16.067.15.135-.006.049-.085.066-.135.066-.055 0-.092-.043-.141-.068-.052-.018-.146-.008-.163-.065zm-.551 0c-.02.058-.113.049-.166.066-.047.025-.086.068-.14.068-.05 0-.13-.02-.136-.068-.01-.066.088-.133.15-.133.08-.031.184-.047.259-.005.019.009.036.03.03.05v.02h.003z"/></svg>';
     var ICON={Mac:APPLE,Windows:WIN,Linux:LINUX};
     document.querySelectorAll('[data-os-icon]').forEach(function(el){el.innerHTML=ICON[os]||APPLE;el.style.display='inline-flex';});
-    document.querySelectorAll('[data-os-label]').forEach(function(el){el.textContent=(el.closest('.final')?'Get PayParty free for ':'Get for ')+os;});
+    document.querySelectorAll('[data-os-label]').forEach(function(el){el.textContent=(el.closest('.final')?'Download PayParty for ':'Get for ')+os;});
   })();
 
   /* ---- typewriter word rotator under "Get paid to" ---- */
@@ -920,13 +951,14 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
   /* ---- FAQ ---- */
   (function faq(){
     var data=[
-      ['Wait, is this actually free?','Yes. PayParty is 100% free — no subscription, no credit card, nothing to buy. You install it, it pays you. Brands fund the whole thing.'],
-      ['How does PayParty make money then?','Sponsors pay to show a tiny card in front of real people. We rent them that little corner of your screen and split the money with you. That\'s the entire business model.'],
-      ['Is it spyware? What can it see?','No. It doesn\'t use your camera, mic, or keyboard, and it doesn\'t read your files or screen contents. It only knows your screen is on so it can run the sponsored card.'],
-      ['How much can I actually make?','Depends how long your screen is on. Most people make pocket money — think coffee-to-a-night-out range, depending on how long your screen is on. It\'s side cash, not a salary.'],
-      ['When and how do I get paid?','Once your balance hits the $5 minimum you can request a cash-out to Cash App, PayPal, or Venmo. Requests are reviewed before payouts are sent — real money, no coins, no gift cards, no points to convert.'],
-      ['Will it slow down my games or computer?','Nope. The widget is tiny and lightweight, hides itself in fullscreen if you want, and you can pause or resize it any time.'],
-      ['Is it on Windows?','Mac first. Windows is coming — get the app now and you\'ll be first in line when it drops.']
+      ['Is PayParty free to use?','Yes. There\'s no subscription, no credit card, and nothing to buy. You install the app and it pays you for the screen space — brands fund the whole thing.'],
+      ['How does PayParty make money?','Sponsors pay to show a tiny card in front of real people. We rent them that little corner of your screen and share the revenue with you. That\'s the entire business model — no hidden fees, no upsells.'],
+      ['What can the app see? Is it spyware?','No. It doesn\'t use your camera, mic, or keyboard, and it doesn\'t read your files or screen contents. It only needs to know your screen is on so it can run the sponsored card.'],
+      ['How much can I actually make?','It depends on how long your screen is on. This is side cash, not a salary — think pocket money you earn during screen time you\'d spend anyway. We don\'t promise a set amount.'],
+      ['When and how do I get paid?','Once your balance reaches the $5 minimum you can request a cash-out to Cash App, PayPal, or Venmo. Every request is reviewed before the payout sends — real money, no coins, no gift cards, no points to convert.'],
+      ['Why are payouts reviewed?','To keep things fair and fraud-free. A quick review on each cash-out means real people get paid and the program stays sustainable for everyone.'],
+      ['Will it slow down my games or computer?','No. The widget is tiny and lightweight, can hide itself in fullscreen, and you can pause or resize it any time.'],
+      ['Is it on Windows?','Mac first. Windows is coming — download the app now and you\'ll be first in line when it lands.']
     ];
     var box=document.querySelector('[data-faq]');if(!box)return;
     data.forEach(function(d){

@@ -26,9 +26,9 @@ function render(state) {
     const on = state.widgetOpen;
     $('#status').innerHTML = on
       ? '<span class="live"><i></i></span> earning · $' + (state.rate || 0).toFixed(2) + '/min (' + (state.tier || 'standard') + ')'
-      : '<span class="live" style="opacity:.5"><i style="background:#bbb;box-shadow:none"></i></span> widget paused';
+      : '<span class="live" style="opacity:.5"><i style="background:#bbb;box-shadow:none;animation:none"></i></span> widget paused';
     $('#launch').classList.toggle('on', on);
-    $('#launch-t').textContent = on ? '■ Stop widget' : '▶ Launch widget';
+    $('#launch-t').textContent = on ? 'Stop widget' : 'Launch widget';
     $('#launch-d').textContent = on
       ? 'The sponsored card is live on your screen.'
       : 'Drop the sponsored card on your screen and start earning.';

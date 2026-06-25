@@ -31,6 +31,33 @@
 
   const titleCase = (value) => String(value || '').replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
+  const prefersReducedMotion = typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Smoothly animate a money figure from its current value up to a target.
+  // Purely presentational — the final displayed value is always money(target).
+  const countUpState = new WeakMap();
+  function animateMoney(el, target) {
+    if (!el) return;
+    const to = Number(target) || 0;
+    const from = countUpState.has(el) ? countUpState.get(el) : 0;
+    countUpState.set(el, to);
+    if (prefersReducedMotion || from === to || Math.abs(to - from) < 0.005) {
+      el.textContent = money(to);
+      return;
+    }
+    const duration = 650;
+    const start = performance.now();
+    const ease = (t) => 1 - Math.pow(1 - t, 3);
+    function step(now) {
+      const progress = Math.min(1, (now - start) / duration);
+      el.textContent = money(from + (to - from) * ease(progress));
+      if (progress < 1 && countUpState.get(el) === to) requestAnimationFrame(step);
+      else if (countUpState.get(el) === to) el.textContent = money(to);
+    }
+    requestAnimationFrame(step);
+  }
+
   const CANONICAL = 'https://www.payparty.fun';
 
   function uuid() {
@@ -75,8 +102,8 @@
   }
 
   function renderSummary() {
-    $('#balance').textContent = money(state.balance);
-    $('#lifetime').textContent = money(state.lifetime);
+    animateMoney($('#balance'), state.balance);
+    animateMoney($('#lifetime'), state.lifetime);
     $('#modal-available').textContent = money(state.balance);
 
     const percentage = Math.min(100, Math.max(0, (state.balance / MINIMUM) * 100));
@@ -108,7 +135,13 @@
 
     const list = $('#activity-list');
     if (!merged.length) {
-      list.innerHTML = '<div class="empty-activity"><span>Your first earning will show up here.<br>Time to get this party moving.</span></div>';
+      list.innerHTML = '<div class="empty-activity">' +
+        '<span class="empty-icon" aria-hidden="true">' +
+        '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3v18m4-14.5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>' +
+        '</span>' +
+        '<strong>No activity yet</strong>' +
+        '<span class="empty-sub">Launch the widget and your first earning will show up here.</span>' +
+        '</div>';
       return;
     }
 

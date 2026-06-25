@@ -10,7 +10,9 @@ let mode = 'signin'; // 'signin' | 'signup'
 function renderState(s) {
   $('#bal').textContent = money(s.balance);
   $('#life').textContent = money(s.lifetime) + ' all-time';
-  $('#sw').classList.toggle('on', s.enabled !== false);
+  const on = s.enabled !== false;
+  $('#sw').classList.toggle('on', on);
+  $('#sw').setAttribute('aria-checked', String(on));
 }
 chrome.storage.onChanged.addListener((c, area) => {
   if (area === 'local') chrome.storage.local.get(['enabled', 'balance', 'lifetime']).then(renderState);
@@ -23,7 +25,11 @@ async function refreshView() {
   $('#auth').classList.toggle('hidden', signedIn);
   $('#app').classList.toggle('hidden', !signedIn);
   if (signedIn) {
-    $('#who').textContent = (sess.user && sess.user.email) || 'Signed in';
+    const email = (sess.user && sess.user.email) || 'Signed in';
+    $('#who').textContent = email;
+    $('#who').title = email;
+    const av = $('#avatar');
+    if (av) av.textContent = (email.trim()[0] || 'P').toUpperCase();
     chrome.storage.local.get(['enabled', 'balance', 'lifetime']).then(renderState);
     // pull the REAL balance from Supabase (also mirrors into storage)
     PPAuth.fetchBalance();
@@ -78,14 +84,27 @@ async function submit() {
 $('#primary').addEventListener('click', submit);
 $('#pass').addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
 
-// Google → web-login fallback (opens hosted login in a new tab)
-$('#google').addEventListener('click', () => chrome.tabs.create({ url: PPAuth.WEB_LOGIN }));
+// Google → real OAuth via chrome.identity (no 404; opens Google account picker)
+$('#google').addEventListener('click', async () => {
+  const err = $('#err'); err.style.color = ''; err.textContent = 'Opening Google…';
+  try {
+    await PPAuth.signInWithGoogle();
+    err.textContent = '';
+    await refreshView();
+  } catch (e) {
+    err.textContent = (e && e.message) || 'Google sign-in failed.';
+  }
+});
 
 /* ---------- signed-in actions ---------- */
 $('#signout').addEventListener('click', async () => { await PPAuth.signOut(); await refreshView(); });
-$('#sw').addEventListener('click', async () => {
+async function toggleEnabled() {
   const { enabled } = await chrome.storage.local.get('enabled');
   await chrome.storage.local.set({ enabled: !(enabled !== false) });
+}
+$('#sw').addEventListener('click', toggleEnabled);
+$('#sw').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleEnabled(); }
 });
 $('#dash').addEventListener('click', () => chrome.tabs.create({ url: DASHBOARD_URL }));
 

@@ -3,57 +3,167 @@
 <head>
 <meta charset="utf-8">
 <title>PayParty — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
 <style>
-  :root{--ink:#160d2e;--ink-soft:#5a5170;--ink-faint:#8b83a3;--purple:#6C4DFF;--purple-lt:#8B5CFF;--purple-dk:#5A35FF;--green-dk:#00a344;--brd:rgba(108,77,255,.16)}
+  :root{
+    --ink:#170e2d;--ink-soft:#615773;--ink-faint:#938aa8;
+    --purple:#6c4dff;--purple-lt:#9b7cff;--purple-dk:#5330ec;
+    --green:#0bcf71;--green-dk:#00a344;
+    --brd:rgba(108,77,255,.14);
+    --card:rgba(255,255,255,.72);
+    --shadow:0 22px 54px rgba(83,48,236,.14);
+    --disp:'Bricolage Grotesque',-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    --body:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  }
   *{margin:0;padding:0;box-sizing:border-box}
-  body{min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:var(--ink);
-    background:radial-gradient(70% 70% at 15% 0%,#efe9ff,#fbfaff);display:grid;place-items:start center;padding:48px 20px}
-  .wrap{width:min(620px,100%);display:grid;gap:16px}
-  .top{display:flex;align-items:center;justify-content:space-between}
-  .brand{display:flex;align-items:center;gap:10px}
-  .mark{display:grid;place-items:center;width:36px;height:36px;border-radius:11px;color:#fff;font-weight:900;font-size:18px;background:linear-gradient(150deg,var(--purple-lt),var(--purple))}
-  .brand .nm{font-weight:800;font-size:18px}
-  .pill{padding:8px 14px;border-radius:99px;background:#fff;border:1px solid var(--brd);font-weight:700;font-size:13px;color:var(--ink-soft)}
-  .bal{position:relative;overflow:hidden;border-radius:24px;padding:30px;color:#fff;background:linear-gradient(150deg,#8B5CFF,#5A35FF);box-shadow:0 26px 60px rgba(90,53,255,.4)}
-  .bal .b1{position:absolute;top:-30%;right:-10%;width:55%;height:120%;border-radius:50%;filter:blur(46px);background:radial-gradient(circle,rgba(255,255,255,.4),transparent 70%)}
-  .bal .l{position:relative;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e7dbff}
-  .bal .a{position:relative;font-weight:800;font-size:56px;letter-spacing:-.03em;line-height:1.05;margin-top:6px}
-  .bal .s{position:relative;margin-top:6px;font-size:13px;color:#e7dbff}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  .tile{border-radius:20px;padding:20px;background:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.9);box-shadow:0 12px 30px rgba(108,77,255,.12)}
-  .tile .t{font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:space-between}
-  .tile .d{font-size:13px;color:var(--ink-soft);margin-top:8px;line-height:1.5}
-  .sw{width:46px;height:26px;border-radius:99px;background:#d9d1f5;position:relative;cursor:pointer;transition:background .2s;flex:none}
-  .sw.on{background:linear-gradient(90deg,var(--purple),var(--purple-lt))}
-  .sw i{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 2px 6px rgba(0,0,0,.2)}
-  .sw.on i{left:23px}
-  .note{font-size:12.5px;color:var(--ink-faint);text-align:center;margin-top:4px}
-  .note b{color:var(--purple)}
+  body{
+    min-height:100vh;font-family:var(--body);color:var(--ink);-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(60% 50% at 100% 0%,rgba(155,124,255,.22),transparent 60%),
+      radial-gradient(55% 45% at 0% 0%,rgba(108,77,255,.16),transparent 60%),
+      linear-gradient(180deg,#f6f2ff,#fdfcff 55%);
+    display:grid;place-items:start center;padding:52px 22px 64px;
+  }
+  ::selection{background:rgba(108,77,255,.2)}
+  .wrap{width:min(640px,100%);display:grid;gap:18px}
+
+  /* ---- header ---- */
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;align-items:center;gap:11px}
+  .mark{
+    display:grid;place-items:center;width:38px;height:38px;border-radius:12px;color:#fff;
+    font-family:var(--disp);font-weight:800;font-size:19px;
+    background:linear-gradient(150deg,var(--purple-lt),var(--purple-dk));
+    box-shadow:0 8px 20px rgba(83,48,236,.4),inset 0 1px 0 rgba(255,255,255,.4);
+  }
+  .brand .nm{font-family:var(--disp);font-weight:800;font-size:19px;letter-spacing:-.02em}
+  .brand .nm b{color:var(--purple-dk)}
+  .pill{
+    display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:99px;background:var(--card);
+    border:1px solid rgba(255,255,255,.9);box-shadow:0 6px 16px rgba(108,77,255,.1);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    font-weight:700;font-size:13px;color:var(--ink-soft);max-width:260px;
+  }
+  .pill .dot{width:7px;height:7px;border-radius:50%;background:#cfc6ec;flex:none}
+  .pill.live{color:var(--ink)}
+  .pill.live .dot{background:var(--green);box-shadow:0 0 7px var(--green)}
+  .pill .tx{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* ---- balance hero ---- */
+  .bal{
+    position:relative;overflow:hidden;border-radius:26px;padding:32px;color:#fff;
+    background:linear-gradient(150deg,var(--purple-lt),var(--purple-dk));
+    box-shadow:0 30px 64px rgba(83,48,236,.4),inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .bal .b1{position:absolute;top:-35%;right:-8%;width:55%;height:130%;border-radius:50%;filter:blur(48px);background:radial-gradient(circle,rgba(255,255,255,.4),transparent 70%);pointer-events:none}
+  .bal .b2{position:absolute;bottom:-50%;left:-10%;width:50%;height:130%;border-radius:50%;filter:blur(54px);background:radial-gradient(circle,rgba(11,207,113,.28),transparent 70%);pointer-events:none}
+  .bal .head{position:relative;display:flex;align-items:center;justify-content:space-between;gap:14px}
+  .bal .l{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.82)}
+  .bal .a{position:relative;font-family:var(--disp);font-weight:800;font-size:58px;letter-spacing:-.035em;line-height:1.02;margin-top:8px;font-variant-numeric:tabular-nums}
+  .bal .s{position:relative;display:flex;align-items:center;gap:7px;margin-top:8px;font-size:13px;color:rgba(255,255,255,.88)}
+  .bal .s .dot{width:6px;height:6px;border-radius:50%;background:#9bffce;box-shadow:0 0 7px #9bffce;flex:none}
+  .cashout{
+    position:relative;display:inline-flex;align-items:center;gap:8px;margin-top:20px;padding:12px 20px;border-radius:13px;
+    font-family:var(--body);font-weight:800;font-size:14px;cursor:pointer;border:none;text-decoration:none;
+    color:var(--green-dk);background:#fff;box-shadow:0 12px 26px rgba(0,0,0,.18);transition:transform .12s,box-shadow .12s;
+  }
+  .cashout:hover{transform:translateY(-1px);box-shadow:0 16px 32px rgba(0,0,0,.24)}
+  .cashout:active{transform:translateY(0) scale(.985)}
+  .cashout:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(255,255,255,.6),0 12px 26px rgba(0,0,0,.18)}
+
+  /* ---- tiles ---- */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .tile{
+    border-radius:22px;padding:22px;background:var(--card);border:1px solid rgba(255,255,255,.9);
+    box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  }
+  .tile .t{font-family:var(--disp);font-weight:700;font-size:15px;letter-spacing:-.01em;display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .tile .d{font-size:13px;color:var(--ink-soft);margin-top:9px;line-height:1.55}
+  .rate-num{font-family:var(--disp);font-weight:800;color:var(--green-dk);font-size:24px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;display:block;margin-bottom:6px}
+  .tierchip{display:inline-block;padding:2px 9px;border-radius:99px;background:rgba(108,77,255,.1);color:var(--purple-dk);font-weight:800;font-size:11px;text-transform:capitalize}
+
+  .sw{width:48px;height:27px;border-radius:99px;background:#dcd5f3;position:relative;cursor:pointer;transition:background .2s;flex:none}
+  .sw.on{background:linear-gradient(90deg,var(--purple-dk),var(--purple-lt))}
+  .sw i{position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 2px 6px rgba(40,20,90,.3)}
+  .sw.on i{left:24px}
+  .sw:focus-visible{outline:2px solid rgba(108,77,255,.45);outline-offset:3px}
+
+  /* ---- steps ---- */
+  .steps{
+    border-radius:22px;padding:22px 24px;background:var(--card);border:1px solid rgba(255,255,255,.9);
+    box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  }
+  .steps h2{font-family:var(--disp);font-weight:700;font-size:15px;letter-spacing:-.01em;margin-bottom:14px}
+  .steps ol{list-style:none;display:grid;gap:12px}
+  .steps li{display:flex;align-items:flex-start;gap:12px;font-size:13px;line-height:1.5;color:var(--ink-soft)}
+  .steps li b{color:var(--ink);font-weight:700}
+  .steps .n{
+    flex:none;display:grid;place-items:center;width:24px;height:24px;border-radius:8px;font-weight:800;font-size:12px;
+    color:var(--purple-dk);background:rgba(108,77,255,.1);
+  }
+
+  .note{
+    display:flex;align-items:center;justify-content:center;gap:8px;font-size:12.5px;color:var(--ink-faint);text-align:center;margin-top:2px;line-height:1.5;
+  }
+  .note b{color:var(--purple-dk)}
+  .note .ic{color:var(--purple);flex:none}
+
+  @media (max-width:480px){
+    body{padding:32px 16px 48px}
+    .grid{grid-template-columns:1fr}
+    .bal{padding:26px}
+    .bal .a{font-size:48px}
+  }
 </style>
 </head>
 <body>
   <div class="wrap">
     <div class="top">
-      <div class="brand"><span class="mark">P</span><span class="nm">PayParty</span></div>
-      <span class="pill" id="signin">Sign in to sync</span>
+      <div class="brand"><span class="mark">P</span><span class="nm">Pay<b>Party</b></span></div>
+      <span class="pill" id="signin"><span class="dot"></span><span class="tx">Sign in to sync</span></span>
     </div>
+
     <div class="bal">
       <div class="b1"></div>
-      <div class="l">Available balance</div>
+      <div class="b2"></div>
+      <div class="head"><div class="l">Available balance</div></div>
       <div class="a" id="balance">$0.00</div>
-      <div class="s" id="lifetime">$0.00 earned all-time</div>
+      <div class="s"><span class="dot"></span><span id="lifetime">$0.00 earned all-time</span></div>
+      <a class="cashout" id="cashout" href="https://www.payparty.fun/dashboard" target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg>
+        Cash out at $5
+      </a>
     </div>
+
     <div class="grid">
       <div class="tile">
-        <div class="t">Browser widget <span class="sw" id="sw"><i></i></span></div>
-        <div class="d">The floating sponsored card on every page. Drag the corner bigger to unlock higher-paying video ads.</div>
+        <div class="t">Browser widget <span class="sw" id="sw" role="switch" aria-label="Toggle browser widget" tabindex="0"><i></i></span></div>
+        <div class="d">The floating sponsored card on every page. Drag a corner to make it bigger and unlock higher-paying video ads.</div>
       </div>
       <div class="tile">
         <div class="t">Current rate</div>
-        <div class="d"><span id="rate" style="font-weight:800;color:var(--green-dk);font-size:18px">$0.05/min</span><br>Tier: <span id="tier">standard</span> · bigger widget = more.</div>
+        <div class="d">
+          <span class="rate-num" id="rate">$0.05/min</span>
+          Tier: <span class="tierchip" id="tier">standard</span><br>
+          A bigger widget earns more per minute.
+        </div>
       </div>
     </div>
-    <div class="note" id="note">Open the extension popup to <b>sign in</b> and sync your real balance across desktop, browser &amp; web.</div>
+
+    <div class="steps">
+      <h2>How it works</h2>
+      <ol>
+        <li><span class="n">1</span><span><b>Turn on the widget</b> and keep it on screen while you game, watch, study, or work.</span></li>
+        <li><span class="n">2</span><span><b>Earn per minute</b> it's visible. Resize it bigger for a higher rate.</span></li>
+        <li><span class="n">3</span><span><b>Cash out at $5</b> to Cash App, Venmo, or PayPal. Payouts are reviewed before they send.</span></li>
+      </ol>
+    </div>
+
+    <div class="note" id="note">
+      <span class="ic" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V5z"/><path d="M9 12l2 2 4-4"/></svg></span>
+      <span>Open the extension popup to <b>sign in</b> and sync your real balance across desktop, browser &amp; web.</span>
+    </div>
   </div>
   <script src="auth.js"></script>
   <script src="dashboard.js"></script>

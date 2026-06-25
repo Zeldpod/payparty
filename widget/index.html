@@ -5,59 +5,231 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="referrer" content="no-referrer-when-downgrade">
 <title>PayParty — Sponsor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
 <style>
+  :root{
+    --purple:#6C4DFF;
+    --purple-lt:#9B7CFF;
+    --purple-dk:#5330EC;
+    --green:#0BCF71;
+    --green-dk:#00C853;
+    --txt:#ffffff;
+    --txt-soft:#cdbfff;
+    --txt-faint:#a99ce0;
+    --r:18px;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;overflow:hidden;background:transparent;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;-webkit-user-select:none;user-select:none}
-  .card{position:relative;height:100vh;display:flex;flex-direction:column;color:#fff;border-radius:18px;overflow:hidden;
-    background:linear-gradient(168deg,rgba(130,97,255,.97),rgba(58,33,120,.99) 52%,#0f0a24);
-    box-shadow:0 18px 50px rgba(20,8,60,.45),0 1px 0 rgba(255,255,255,.28) inset}
-  .head{display:flex;align-items:center;gap:8px;padding:12px 13px 6px;-webkit-app-region:drag}
-  .head .m{width:24px;height:24px;border-radius:7px;display:block}
-  .head .nm{font-weight:800;font-size:13px;letter-spacing:-.01em}
-  .head .live{margin-left:auto;display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:#7CFFB0}
-  .head .live i{width:6px;height:6px;border-radius:50%;background:#7CFFB0;box-shadow:0 0 8px #7CFFB0;animation:pl 1.6s infinite}
-  @keyframes pl{0%,100%{opacity:.6}50%{opacity:1}}
-  .tag{display:flex;align-items:center;justify-content:space-between;padding:0 14px;-webkit-app-region:drag}
-  .tag .lab{font-size:9.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:#cbbcff;display:inline-flex;gap:5px;align-items:center}
-  .tag .lab i{width:5px;height:5px;border-radius:50%;background:#cbbcff}
-  .tag .rate{font-size:11px;font-weight:800;color:#7CFFB0;background:rgba(124,255,176,.14);padding:3px 9px;border-radius:99px}
-  .creative{flex:1;min-height:0;margin:10px 12px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;overflow:auto}
-  .ad-slot{display:flex;align-items:center;justify-content:center;width:100%;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.06)}
-  .ad-slot iframe{border:0;display:block;max-width:100%}
+    font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    -webkit-user-select:none;user-select:none;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  .disp{font-family:'Bricolage Grotesque','Hanken Grotesk',sans-serif}
+  .tnum{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+
+  /* ---------- the glass chip ---------- */
+  .card{position:relative;height:100vh;display:flex;flex-direction:column;color:var(--txt);
+    border-radius:22px;overflow:hidden;
+    background:
+      radial-gradient(120% 80% at 80% -10%,rgba(155,124,255,.55),transparent 55%),
+      linear-gradient(168deg,#3a2a78 0%,#241650 46%,#160d2e 100%);
+    box-shadow:
+      0 24px 60px -16px rgba(20,8,60,.65),
+      0 2px 10px rgba(20,8,60,.4),
+      0 0 0 1px rgba(255,255,255,.07),
+      0 1px 0 rgba(255,255,255,.22) inset,
+      0 -40px 60px -40px rgba(108,77,255,.5) inset}
+  /* faint animated aurora wash behind content for life */
+  .card::before{content:"";position:absolute;inset:-30%;z-index:0;pointer-events:none;
+    background:radial-gradient(40% 36% at 20% 18%,rgba(124,255,176,.10),transparent 60%),
+              radial-gradient(46% 40% at 88% 84%,rgba(155,124,255,.22),transparent 62%);
+    animation:drift 14s ease-in-out infinite alternate}
+  @keyframes drift{0%{transform:translate3d(0,0,0) scale(1)}100%{transform:translate3d(-4%,3%,0) scale(1.08)}}
+  .card>*{position:relative;z-index:1}
+
+  /* ---------- header ---------- */
+  .head{display:flex;align-items:center;gap:9px;padding:13px 14px 0;-webkit-app-region:drag}
+  .head .m{width:26px;height:26px;border-radius:8px;display:block;flex:none;
+    box-shadow:0 2px 8px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.16)}
+  .head .nm{font-weight:800;font-size:14px;letter-spacing:-.02em;font-family:'Bricolage Grotesque',sans-serif}
+  .head .live{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;
+    letter-spacing:.02em;color:#7CFFB0;background:rgba(11,207,113,.13);border:1px solid rgba(124,255,176,.22);
+    padding:4px 9px 4px 8px;border-radius:99px;-webkit-app-region:no-drag}
+  .head .live i{width:6px;height:6px;border-radius:50%;background:#7CFFB0;
+    box-shadow:0 0 0 0 rgba(124,255,176,.6);animation:pulse 1.8s var(--ease) infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(124,255,176,.55)}70%{box-shadow:0 0 0 7px rgba(124,255,176,0)}100%{box-shadow:0 0 0 0 rgba(124,255,176,0)}}
+
+  /* ---------- earnings readout ---------- */
+  .balance{margin:11px 14px 0;padding:13px 15px 14px;border-radius:16px;-webkit-app-region:drag;
+    background:linear-gradient(150deg,rgba(255,255,255,.10),rgba(255,255,255,.03));
+    border:1px solid rgba(255,255,255,.10);
+    box-shadow:0 1px 0 rgba(255,255,255,.12) inset,0 8px 22px -14px rgba(0,0,0,.6)}
+  .balance .cap{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .balance .cap .l{font-size:9.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--txt-faint)}
+  .balance .cap .rate{font-size:10.5px;font-weight:800;color:#7CFFB0;
+    background:rgba(11,207,113,.14);border:1px solid rgba(124,255,176,.18);padding:3px 9px;border-radius:99px;-webkit-app-region:no-drag}
+  .balance .amt{display:flex;align-items:baseline;gap:7px;margin-top:7px;line-height:1}
+  .balance .amt .big{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacing:-.04em;
+    font-size:34px;color:#fff;text-shadow:0 2px 14px rgba(124,255,176,.25)}
+  .balance .amt .unit{font-size:11.5px;font-weight:700;color:var(--txt-faint);text-transform:uppercase;letter-spacing:.08em}
+  .balance .meta{margin-top:10px;display:flex;align-items:center;gap:9px}
+  .balance .bar{flex:1;height:5px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}
+  .balance .bar span{display:block;height:100%;width:0%;border-radius:99px;
+    background:linear-gradient(90deg,var(--green),#7CFFB0);transition:width .6s var(--ease)}
+  .balance .goal{font-size:10px;font-weight:700;color:var(--txt-faint);white-space:nowrap}
+
+  /* ---------- sponsor / ad ---------- */
+  .tag{display:flex;align-items:center;justify-content:space-between;padding:13px 15px 0;-webkit-app-region:drag}
+  .tag .lab{font-size:9px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--txt-faint);
+    display:inline-flex;gap:6px;align-items:center}
+  .tag .lab i{width:5px;height:5px;border-radius:50%;background:var(--purple-lt);box-shadow:0 0 7px var(--purple-lt)}
+
+  .creative{flex:1;min-height:0;margin:9px 12px 0;position:relative;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:9px;overflow:auto}
+  .ad-slot{display:flex;align-items:center;justify-content:center;width:100%;border-radius:14px;overflow:hidden}
+  .ad-slot:empty{display:none}
+  .ad-slot iframe{border:0;display:block;max-width:100%;border-radius:14px}
   #ad-native{width:100%}
-  .fallback{position:absolute;inset:54px 12px 96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;
-    border-radius:14px;background:linear-gradient(155deg,rgba(150,116,255,.9),rgba(74,42,150,.95) 60%,rgba(20,12,48,.96));
-    color:#fff;font-weight:700;pointer-events:none;z-index:0;box-shadow:0 8px 26px rgba(20,8,60,.4) inset,0 0 0 1px rgba(255,255,255,.1) inset}
-  .fallback .fb-badge{font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#cbbcff;
-    background:rgba(255,255,255,.12);padding:3px 9px;border-radius:99px}
-  .fallback .fb-title{font-size:16px;font-weight:900;letter-spacing:-.01em}
-  .fallback .fb-sub{font-size:11px;font-weight:600;color:#e2dbff;opacity:.9}
+
+  /* gorgeous CSS house-ad fallback — never blank */
+  .fallback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:9px;text-align:center;border-radius:16px;overflow:hidden;pointer-events:none;z-index:0;padding:18px;
+    background:
+      radial-gradient(90% 70% at 50% 0%,rgba(155,124,255,.45),transparent 60%),
+      linear-gradient(158deg,rgba(108,77,255,.42),rgba(40,24,90,.5) 70%,rgba(20,12,48,.55));
+    border:1px solid rgba(255,255,255,.10);
+    box-shadow:0 1px 0 rgba(255,255,255,.14) inset}
+  .fallback::after{content:"";position:absolute;inset:0;
+    background:radial-gradient(60% 50% at 80% 88%,rgba(124,255,176,.14),transparent 60%);animation:drift 11s ease-in-out infinite alternate}
+  .fallback .fb-ico{position:relative;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    background:linear-gradient(150deg,rgba(255,255,255,.22),rgba(255,255,255,.06));
+    border:1px solid rgba(255,255,255,.2);box-shadow:0 8px 20px -8px rgba(0,0,0,.5);font-size:22px}
+  .fallback .fb-badge{position:relative;font-size:8.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;
+    color:#e6dfff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);padding:3px 10px;border-radius:99px}
+  .fallback .fb-title{position:relative;font-family:'Bricolage Grotesque',sans-serif;font-size:17px;font-weight:800;letter-spacing:-.02em}
+  .fallback .fb-sub{position:relative;font-size:11px;font-weight:600;line-height:1.4;color:#ded6ff;max-width:24ch}
   .creative.has-ad .fallback{display:none}
-  .cta{margin:10px 14px 0;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:14px;font-weight:800;font-size:13.5px;color:#04210d;cursor:pointer;border:none;
-    background:linear-gradient(150deg,#1be06a,#00C853);box-shadow:0 8px 20px rgba(0,200,83,.4);-webkit-app-region:no-drag}
-  .cta:hover{filter:brightness(1.06)}
-  .cta:active{transform:translateY(1px)}
-  .foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 14px 12px;font-size:11px;color:#cbbcff}
-  .earn{font-weight:800;color:#fff;white-space:nowrap}
-  .signin{font-size:10px;font-weight:700;color:#7CFFB0;opacity:.92;text-align:right}
-  .coin{position:absolute;left:50%;top:46px;transform:translateX(-50%);font-weight:900;font-size:15px;color:#7CFFB0;opacity:0;pointer-events:none;z-index:5}
-  @keyframes ppcoin{0%{opacity:0;transform:translate(-50%,0) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(-50%,-46px) scale(1.1)}}
-  [data-tier=compact] .head{padding-top:9px}
+
+  /* loading shimmer while the ad iframe is filling */
+  .creative.loading::before{content:"";position:absolute;inset:0;z-index:2;border-radius:16px;pointer-events:none;
+    background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.10) 50%,transparent 70%);
+    background-size:220% 100%;animation:shim 1.4s linear infinite}
+  .creative.has-ad.loading::before,.creative:not(.loading)::before{display:none}
+  @keyframes shim{0%{background-position:130% 0}100%{background-position:-130% 0}}
+
+  /* ---------- primary CTA ---------- */
+  .cta{position:relative;margin:11px 14px 0;display:flex;align-items:center;justify-content:center;gap:8px;
+    padding:13px;border-radius:15px;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:14px;
+    letter-spacing:-.01em;color:#04210d;cursor:pointer;border:none;overflow:hidden;-webkit-app-region:no-drag;
+    background:linear-gradient(150deg,#1be06a,var(--green-dk));
+    box-shadow:0 10px 24px -8px rgba(0,200,83,.6),0 1px 0 rgba(255,255,255,.45) inset;
+    transition:transform .18s var(--ease),box-shadow .25s var(--ease),filter .2s}
+  .cta::after{content:"";position:absolute;top:0;left:-120%;width:55%;height:100%;transform:skewX(-22deg);
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent)}
+  .cta:hover{transform:translateY(-1px);box-shadow:0 16px 30px -10px rgba(0,200,83,.7),0 1px 0 rgba(255,255,255,.5) inset}
+  .cta:hover::after{animation:sheen .9s var(--ease)}
+  .cta:active{transform:translateY(1px) scale(.99)}
+  .cta:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(124,255,176,.55),0 10px 24px -8px rgba(0,200,83,.6)}
+  .cta .arr{transition:transform .25s var(--ease)}
+  .cta:hover .arr{transform:translateX(3px)}
+  @keyframes sheen{0%{left:-120%}100%{left:140%}}
+
+  /* ---------- footer ---------- */
+  .foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 15px 13px;
+    font-size:10.5px;color:var(--txt-faint);-webkit-app-region:drag}
+  .foot .note{display:inline-flex;align-items:center;gap:5px;font-weight:600}
+  .foot .note svg{flex:none;opacity:.85}
+  .signin{font-size:10px;font-weight:800;color:#7CFFB0;text-align:right;-webkit-app-region:no-drag}
+  .grow{font-weight:700}
+
+  /* ---------- coin pop ---------- */
+  .coin{position:absolute;left:50%;top:42%;transform:translate(-50%,0);font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:800;font-size:18px;color:#7CFFB0;text-shadow:0 2px 12px rgba(11,207,113,.6);
+    opacity:0;pointer-events:none;z-index:6}
+  @keyframes ppcoin{0%{opacity:0;transform:translate(-50%,8px) scale(.6)}18%{opacity:1}
+    100%{opacity:0;transform:translate(-50%,-52px) scale(1.12)}}
+
+  /* ---------- tier states ---------- */
+  /* large: roomy balance, full ad + native, all the trimmings */
+  [data-tier=large] .balance .amt .big{font-size:38px}
+
+  /* standard: default. compact: collapse the balance block into a slim line, hide native, tighten everything */
+  [data-tier=compact] .head{padding:9px 12px 0}
+  [data-tier=compact] .balance{margin:8px 12px 0;padding:8px 11px;border-radius:12px}
+  [data-tier=compact] .balance .cap{display:none}
+  [data-tier=compact] .balance .amt{margin-top:0;justify-content:space-between;align-items:center}
+  [data-tier=compact] .balance .amt .big{font-size:21px}
+  [data-tier=compact] .balance .amt .unit{margin-left:auto}
+  [data-tier=compact] .balance .meta{display:none}
+  [data-tier=compact] .tag{display:none}
+  [data-tier=compact] .creative{margin:8px 10px 0}
+  [data-tier=compact] #ad-native{display:none}
+  [data-tier=compact] .fallback{gap:5px;padding:10px}
+  [data-tier=compact] .fallback .fb-ico,[data-tier=compact] .fallback .fb-sub{display:none}
+  [data-tier=compact] .fallback .fb-title{font-size:14px}
+  [data-tier=compact] .cta{margin:8px 12px 0;padding:10px;font-size:13px}
+  [data-tier=compact] .foot{padding:8px 12px 10px}
+  [data-tier=compact] .foot .note span{display:none}
+
+  /* standard hides the native slot (only large is roomy enough) */
+  [data-tier=standard] #ad-native{display:none}
+
+  @media (prefers-reduced-motion:reduce){
+    .card::before,.fallback::after,.head .live i,.creative.loading::before{animation:none}
+  }
 </style>
 </head>
 <body data-tier="standard">
   <div class="card">
-    <div class="head"><img class="m" src="/assets/app-icon.png" alt=""><span class="nm">PayParty</span><span class="live"><i></i>earning</span></div>
-    <div class="tag"><span class="lab"><i></i><span id="taglabel">Sponsored</span></span><span class="rate" id="rate">$0.05/min</span></div>
-    <div class="creative" id="creative">
+    <div class="head">
+      <img class="m" src="/assets/app-icon.png" alt="">
+      <span class="nm disp">PayParty</span>
+      <span class="live"><i></i>Earning</span>
+    </div>
+
+    <div class="balance">
+      <div class="cap">
+        <span class="l">Session earnings</span>
+        <span class="rate tnum" id="rate">$0.05/min</span>
+      </div>
+      <div class="amt">
+        <span class="big tnum" id="earn">$0.00</span>
+        <span class="unit" id="earn-unit">estimated</span>
+      </div>
+      <div class="meta">
+        <div class="bar"><span id="goalbar"></span></div>
+        <span class="goal" id="goal">$5.00 to cash out</span>
+      </div>
+    </div>
+
+    <div class="tag">
+      <span class="lab"><i></i><span id="taglabel">Sponsored</span></span>
+    </div>
+
+    <div class="creative loading" id="creative">
       <div class="ad-slot" id="ad-banner"></div>
       <div class="ad-slot" id="ad-native"></div>
-      <div class="fallback"><span class="fb-badge">Your ad here</span><span class="fb-title">PayParty Premium</span><span class="fb-sub">Sponsor this slot · reach earners</span></div>
+      <div class="fallback">
+        <span class="fb-ico">✦</span>
+        <span class="fb-badge">Your ad here</span>
+        <span class="fb-title disp">Sponsor this slot</span>
+        <span class="fb-sub">Reach people getting paid for screen time.</span>
+      </div>
     </div>
-    <button class="cta" id="cta">View sponsor →</button>
-    <div class="foot"><span class="earn" id="earn">$0.00 estimated</span><span class="signin" id="signin" style="display:none">Sign in to earn real money</span><span class="grow" id="grow">Drag edge → grow 📈</span></div>
-    <div class="coin" id="coin">+$0.05</div>
+
+    <button class="cta" id="cta" type="button"><span class="disp">View sponsor</span><span class="arr">→</span></button>
+
+    <div class="foot">
+      <span class="note">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg>
+        <span>Payouts reviewed before they send</span>
+      </span>
+      <span class="signin" id="signin" style="display:none">Sign in to earn real money</span>
+      <span class="grow" id="grow">Drag edge → grow 📈</span>
+    </div>
+
+    <div class="coin tnum" id="coin">+$0.05</div>
   </div>
 
 <script>
@@ -74,6 +246,7 @@
   };
   var SOCIALBAR_SRC = 'https://pl29853227.effectivecpmnetwork.com/59/05/f8/5905f8858a836a832aaa98f8ca6b0851.js';
   var RATE = { compact: 0.02, standard: 0.05, large: 0.15 };
+  var GOAL = 5; // cash-out threshold ($)
 
   // host=app (desktop transparent window) skips the page-level floating units
   // (Social Bar / Native) which would render outside the rounded card.
@@ -83,11 +256,18 @@
   var $ = function (id) { return document.getElementById(id); };
   var tier = null, socialLoaded = false, nativeLoaded = false;
 
-  function revealAd() { $('creative').classList.add('has-ad'); }
+  function revealAd() {
+    var c = $('creative');
+    c.classList.add('has-ad');
+    c.classList.remove('loading');
+  }
   function mountBanner(t) {
     var b = BANNERS[t] || BANNERS.standard;
     var slot = $('ad-banner');
     slot.innerHTML = '';
+    // a fresh ad is loading → show the shimmer until it fills (or times out)
+    $('creative').classList.remove('has-ad');
+    $('creative').classList.add('loading');
     var f = document.createElement('iframe');
     f.title = 'Sponsored ad';
     f.setAttribute('scrolling', 'no');
@@ -127,6 +307,17 @@
   var rt;
   window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(setTier, 250); });
 
+  // progress bar toward the $5 cash-out goal
+  function paintGoal(amount) {
+    var pct = Math.max(0, Math.min(100, (amount / GOAL) * 100));
+    $('goalbar').style.width = pct.toFixed(1) + '%';
+    if (amount >= GOAL) {
+      $('goal').textContent = 'Ready to cash out!';
+    } else {
+      $('goal').textContent = '$' + (GOAL - amount).toFixed(2) + ' to cash out';
+    }
+  }
+
   // Pick the tier (and mount the ad) up front so `tier` is set before the very
   // first earnings tick fires — otherwise the first /api/earn POST would send
   // tier:null (rejected 400) and popCoin would render +$NaN.
@@ -163,19 +354,23 @@
         body: JSON.stringify({ seconds: 15, tier: tier })
       }).then(function (r) { return r.json(); }).then(function (d) {
         if (d && typeof d.balance === 'number') {
-          $('earn').textContent = '$' + d.balance.toFixed(2) + ' balance';
+          $('earn').textContent = '$' + d.balance.toFixed(2);
+          $('earn-unit').textContent = 'balance';
+          paintGoal(d.balance);
           popCoin(RATE[tier] * 15 / 60);
         }
       }).catch(function () {});
     };
-    $('earn').textContent = '$0.00 balance';
+    $('earn').textContent = '$0.00';
+    $('earn-unit').textContent = 'balance';
+    paintGoal(0);
     setInterval(earnTick, 15000);
     earnTick();
   } else {
     // ---- estimated session earnings (DISPLAY ONLY, signed out) ----
     var dayKey = function () { var d = new Date(); return 'pp_earn_' + d.getFullYear() + '_' + (d.getMonth() + 1) + '_' + d.getDate(); };
     var earn = parseFloat(localStorage.getItem(dayKey()) || '0') || 0;
-    var paint = function () { $('earn').textContent = '$' + earn.toFixed(2) + ' estimated'; };
+    var paint = function () { $('earn').textContent = '$' + earn.toFixed(2); $('earn-unit').textContent = 'estimated'; paintGoal(earn); };
     var bump = function (a) {
       earn = Math.round((earn + a) * 100) / 100;
       try { localStorage.setItem(dayKey(), String(earn)); } catch (e) {}

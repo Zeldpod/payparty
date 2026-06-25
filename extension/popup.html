@@ -2,66 +2,195 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
 <style>
-  :root{--ink:#160d2e;--ink-soft:#5a5170;--purple:#6C4DFF;--purple-lt:#8B5CFF;--green-dk:#00a344;--brd:rgba(108,77,255,.16)}
+  :root{
+    --ink:#170e2d;--ink-soft:#615773;--ink-faint:#938aa8;
+    --purple:#6c4dff;--purple-lt:#9b7cff;--purple-dk:#5330ec;
+    --green:#0bcf71;--green-dk:#00a344;
+    --brd:rgba(108,77,255,.14);
+    --card:rgba(255,255,255,.72);
+    --shadow:0 18px 44px rgba(83,48,236,.14);
+    --disp:'Bricolage Grotesque',-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    --body:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  }
   *{margin:0;padding:0;box-sizing:border-box}
-  body{width:300px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:var(--ink);
-    background:radial-gradient(80% 80% at 20% 0%,#efe9ff,#fbfaff);padding:16px}
-  .top{display:flex;align-items:center;gap:9px;margin-bottom:14px}
-  .mark{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;color:#fff;font-weight:900;font-size:16px;background:linear-gradient(150deg,var(--purple-lt),var(--purple))}
-  .name{font-weight:800;font-size:16px;letter-spacing:-.01em}
-  .bal{border-radius:16px;padding:16px;color:#fff;background:linear-gradient(150deg,#8B5CFF,#5A35FF);box-shadow:0 12px 26px rgba(90,53,255,.35)}
-  .bal .l{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.85}
-  .bal .a{font-weight:800;font-size:30px;letter-spacing:-.02em;margin-top:3px}
-  .bal .s{font-size:11.5px;opacity:.85;margin-top:2px}
-  .row{display:flex;align-items:center;justify-content:space-between;margin-top:14px;font-size:14px;font-weight:600}
-  .sw{width:46px;height:26px;border-radius:99px;background:#d9d1f5;position:relative;cursor:pointer;transition:background .2s}
-  .sw.on{background:linear-gradient(90deg,var(--purple),var(--purple-lt))}
-  .sw i{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 2px 6px rgba(0,0,0,.2)}
-  .sw.on i{left:23px}
-  .btn{display:block;width:100%;margin-top:14px;padding:12px;border-radius:12px;text-align:center;font-weight:800;font-size:14px;cursor:pointer;border:none;
-    color:#fff;background:linear-gradient(180deg,#a488ff,#5e34f0);box-shadow:0 10px 22px rgba(108,77,255,.4)}
-  .btn:disabled{opacity:.6;cursor:default}
-  .btn.ghost{background:#fff;color:var(--purple);border:1px solid var(--brd);box-shadow:none}
-  .hint{margin-top:10px;font-size:11px;color:var(--ink-soft);text-align:center}
-  .who{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:12px;color:var(--ink-soft)}
-  .who .em{font-weight:700;color:var(--ink);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .link{background:none;border:none;color:var(--purple);font-weight:700;font-size:12px;cursor:pointer;padding:0}
-  .field{width:100%;margin-top:8px;padding:11px 12px;border-radius:11px;border:1px solid var(--brd);font-size:14px;font-family:inherit;background:#fff;color:var(--ink)}
-  .field:focus{outline:none;border-color:var(--purple-lt)}
-  .err{margin-top:8px;font-size:11.5px;color:#d23b3b;text-align:center;min-height:0}
-  .ok{margin-top:8px;font-size:11.5px;color:var(--green-dk);text-align:center}
-  .or{display:flex;align-items:center;gap:8px;margin:12px 0 2px;color:var(--ink-soft);font-size:11px}
+  body{
+    width:320px;font-family:var(--body);color:var(--ink);
+    background:
+      radial-gradient(120% 90% at 100% 0%,rgba(155,124,255,.22),transparent 55%),
+      radial-gradient(110% 80% at 0% 0%,rgba(108,77,255,.16),transparent 55%),
+      linear-gradient(180deg,#f6f2ff,#fdfcff 60%);
+    padding:18px;-webkit-font-smoothing:antialiased;overflow:hidden;
+  }
+  ::selection{background:rgba(108,77,255,.2)}
+
+  /* ---- brand ---- */
+  .top{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+  .mark{
+    display:grid;place-items:center;width:32px;height:32px;border-radius:10px;color:#fff;
+    font-family:var(--disp);font-weight:800;font-size:17px;
+    background:linear-gradient(150deg,var(--purple-lt),var(--purple-dk));
+    box-shadow:0 6px 16px rgba(83,48,236,.4),inset 0 1px 0 rgba(255,255,255,.4);
+  }
+  .name{font-family:var(--disp);font-weight:800;font-size:17px;letter-spacing:-.02em}
+  .name b{color:var(--purple-dk)}
+  .top .tag{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--ink-faint);text-transform:uppercase}
+
+  /* ---- signed-out: hero + auth ---- */
+  .lede{margin-bottom:14px}
+  .lede h1{font-family:var(--disp);font-weight:800;font-size:21px;line-height:1.12;letter-spacing:-.025em}
+  .lede p{margin-top:6px;font-size:12.5px;line-height:1.45;color:var(--ink-soft)}
+
+  .glass{
+    border-radius:20px;padding:16px;background:var(--card);
+    border:1px solid rgba(255,255,255,.9);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  }
+
+  .field{
+    width:100%;margin-top:9px;padding:12px 13px;border-radius:12px;border:1px solid var(--brd);
+    font-size:14px;font-family:inherit;background:#fff;color:var(--ink);transition:border-color .15s,box-shadow .15s;
+  }
+  .field:first-of-type{margin-top:0}
+  .field::placeholder{color:var(--ink-faint)}
+  .field:focus{outline:none;border-color:var(--purple-lt);box-shadow:0 0 0 3px rgba(108,77,255,.14)}
+
+  .btn{
+    display:flex;align-items:center;justify-content:center;gap:7px;
+    width:100%;margin-top:12px;padding:13px;border-radius:13px;text-align:center;
+    font-family:var(--body);font-weight:800;font-size:14px;cursor:pointer;border:none;color:#fff;
+    background:linear-gradient(180deg,var(--purple-lt),var(--purple-dk));
+    box-shadow:0 10px 22px rgba(83,48,236,.34),inset 0 1px 0 rgba(255,255,255,.3);
+    transition:transform .12s,box-shadow .12s,opacity .15s;
+  }
+  .btn:hover{transform:translateY(-1px);box-shadow:0 14px 28px rgba(83,48,236,.42),inset 0 1px 0 rgba(255,255,255,.3)}
+  .btn:active{transform:translateY(0) scale(.985);box-shadow:0 6px 14px rgba(83,48,236,.34)}
+  .btn:disabled{opacity:.6;cursor:default;transform:none;box-shadow:0 6px 14px rgba(83,48,236,.24)}
+  .btn:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(108,77,255,.35),0 10px 22px rgba(83,48,236,.34)}
+  .btn.green{background:linear-gradient(180deg,#1be084,#00a344);box-shadow:0 10px 22px rgba(0,163,68,.32),inset 0 1px 0 rgba(255,255,255,.35)}
+  .btn.green:hover{box-shadow:0 14px 28px rgba(0,163,68,.4),inset 0 1px 0 rgba(255,255,255,.35)}
+  .btn.ghost{background:#fff;color:var(--purple-dk);border:1px solid var(--brd);box-shadow:0 4px 12px rgba(108,77,255,.08)}
+  .btn.ghost:hover{box-shadow:0 8px 18px rgba(108,77,255,.14)}
+  .btn .gi{display:inline-grid;place-items:center;width:16px;height:16px}
+
+  .err{margin-top:10px;font-size:11.5px;line-height:1.4;color:#d23b3b;text-align:center;min-height:0;font-weight:600}
+
+  .or{display:flex;align-items:center;gap:9px;margin:13px 0 1px;color:var(--ink-faint);font-size:11px;font-weight:600;letter-spacing:.02em}
   .or::before,.or::after{content:"";flex:1;height:1px;background:var(--brd)}
-  .toggle{margin-top:10px;font-size:11.5px;color:var(--ink-soft);text-align:center}
+
+  .toggle{margin-top:13px;font-size:12px;color:var(--ink-soft);text-align:center}
+  .link{background:none;border:none;color:var(--purple-dk);font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;padding:0;border-radius:4px}
+  .link:hover{text-decoration:underline}
+  .link:focus-visible{outline:2px solid rgba(108,77,255,.4);outline-offset:2px}
+
+  .trust{
+    display:flex;align-items:flex-start;gap:8px;margin-top:13px;padding:11px 12px;border-radius:13px;
+    background:rgba(108,77,255,.06);border:1px solid var(--brd);font-size:11px;line-height:1.45;color:var(--ink-soft);
+  }
+  .trust .ic{flex:none;margin-top:1px;color:var(--purple)}
+  .trust b{color:var(--ink)}
+
+  /* ---- signed-in ---- */
+  .bal{
+    position:relative;overflow:hidden;border-radius:18px;padding:17px 18px;color:#fff;
+    background:linear-gradient(150deg,var(--purple-lt),var(--purple-dk));
+    box-shadow:0 16px 32px rgba(83,48,236,.36),inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .bal .glow{position:absolute;top:-50%;right:-15%;width:60%;height:160%;border-radius:50%;filter:blur(40px);background:radial-gradient(circle,rgba(255,255,255,.35),transparent 70%);pointer-events:none}
+  .bal .l{position:relative;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.82)}
+  .bal .a{position:relative;font-family:var(--disp);font-weight:800;font-size:34px;letter-spacing:-.03em;margin-top:4px;font-variant-numeric:tabular-nums}
+  .bal .s{position:relative;display:flex;align-items:center;gap:6px;font-size:11.5px;margin-top:5px;color:rgba(255,255,255,.85)}
+  .bal .s .dot{width:5px;height:5px;border-radius:50%;background:#9bffce;box-shadow:0 0 6px #9bffce}
+
+  .who{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:13px;font-size:12px;color:var(--ink-soft)}
+  .who .em{display:flex;align-items:center;gap:7px;min-width:0}
+  .who .av{flex:none;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:linear-gradient(150deg,var(--purple-lt),var(--purple));color:#fff;font-weight:800;font-size:11px}
+  .who .name-t{font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  .row{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:13px;padding:13px 14px;
+    border-radius:14px;background:var(--card);border:1px solid rgba(255,255,255,.9);box-shadow:0 6px 16px rgba(108,77,255,.08);
+  }
+  .row .lab{font-size:13px;font-weight:700;line-height:1.3}
+  .row .sub{font-size:11px;color:var(--ink-soft);margin-top:2px;font-weight:500}
+  .sw{width:46px;height:27px;border-radius:99px;background:#dcd5f3;position:relative;cursor:pointer;flex:none;transition:background .2s}
+  .sw.on{background:linear-gradient(90deg,var(--purple-dk),var(--purple-lt))}
+  .sw i{position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 2px 6px rgba(40,20,90,.3)}
+  .sw.on i{left:22px}
+  .sw:focus-visible{outline:2px solid rgba(108,77,255,.4);outline-offset:3px}
+
+  .hint{margin-top:12px;font-size:11px;line-height:1.5;color:var(--ink-soft);text-align:center;padding:0 2px}
+  .hint b{color:var(--purple-dk)}
+
   .hidden{display:none}
 </style>
 </head>
 <body>
-  <div class="top"><span class="mark">P</span><span class="name">PayParty</span></div>
+  <div class="top">
+    <span class="mark">P</span>
+    <span class="name">Pay<b>Party</b></span>
+    <span class="tag">Get paid for screen time</span>
+  </div>
 
   <!-- Signed-out: email/password auth (primary in-extension path) -->
   <div id="auth" class="hidden">
-    <input class="field" id="email" type="email" autocomplete="email" placeholder="Email">
-    <input class="field" id="pass" type="password" autocomplete="current-password" placeholder="Password">
-    <div class="err" id="err"></div>
-    <button class="btn" id="primary">Sign in</button>
-    <div class="or">or</div>
-    <button class="btn ghost" id="google">Continue with Google</button>
-    <div class="toggle">
-      <span id="toggleTxt">New here?</span>
-      <button class="link" id="toggle">Create an account</button>
+    <div class="lede">
+      <h1>Earn while you<br>do whatever.</h1>
+      <p>A tiny sponsored widget pays you for screen time. Sign in to track your balance.</p>
     </div>
-    <div class="hint">Google sign-in opens <b>payparty.fun</b> in a new tab (web-login fallback). Email &amp; password works right here.</div>
+    <div class="glass">
+      <input class="field" id="email" type="email" autocomplete="email" placeholder="you@email.com">
+      <input class="field" id="pass" type="password" autocomplete="current-password" placeholder="Password">
+      <div class="err" id="err"></div>
+      <button class="btn" id="primary">Sign in</button>
+      <div class="or">or</div>
+      <button class="btn ghost" id="google">
+        <span class="gi" aria-hidden="true">
+          <svg width="15" height="15" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.4 29.3 35.5 24 35.5 17.6 35.5 12.5 30.4 12.5 24S17.6 12.5 24 12.5c3 0 5.7 1.1 7.8 3l5.7-5.7C33.9 6.5 29.2 4.5 24 4.5 13.2 4.5 4.5 13.2 4.5 24S13.2 43.5 24 43.5c10.4 0 19-7.6 19-19.5 0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12.5 24 12.5c3 0 5.7 1.1 7.8 3l5.7-5.7C33.9 6.5 29.2 4.5 24 4.5 16.3 4.5 9.7 8.8 6.3 14.7z"/><path fill="#4CAF50" d="M24 43.5c5.2 0 9.8-2 13.3-5.2l-6.2-5.2c-2 1.5-4.5 2.4-7.1 2.4-5.3 0-9.7-3.1-11.3-7.4l-6.5 5C9.6 39.1 16.2 43.5 24 43.5z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4-4.1 5.3l6.2 5.2C39 35.7 43.5 30.5 43.5 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
+        </span>
+        Continue with Google
+      </button>
+      <div class="toggle">
+        <span id="toggleTxt">New here?</span>
+        <button class="link" id="toggle">Create an account</button>
+      </div>
+    </div>
+    <div class="trust">
+      <span class="ic" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V5z"/><path d="M9 12l2 2 4-4"/></svg>
+      </span>
+      <span><b>Cash out at $5.</b> Payouts are reviewed before they send. Google sign-in opens <b>payparty.fun</b> in a new tab.</span>
+    </div>
   </div>
 
   <!-- Signed-in -->
   <div id="app" class="hidden">
-    <div class="bal"><div class="l">Balance</div><div class="a" id="bal">$0.00</div><div class="s" id="life">$0.00 all-time</div></div>
-    <div class="who"><span class="em" id="who">—</span><button class="link" id="signout">Sign out</button></div>
-    <div class="row"><span>Show "Earn" button on pages</span><span class="sw" id="sw"><i></i></span></div>
-    <button class="btn" id="dash">Open dashboard →</button>
-    <div class="hint">Click the <b>Earn</b> button on any page → your widget pops out, floating on top. Bigger = higher-paying ads 📈</div>
+    <div class="bal">
+      <div class="glow"></div>
+      <div class="l">Balance</div>
+      <div class="a" id="bal">$0.00</div>
+      <div class="s"><span class="dot"></span><span id="life">$0.00 all-time</span></div>
+    </div>
+    <div class="who">
+      <span class="em"><span class="av" id="avatar">P</span><span class="name-t" id="who">—</span></span>
+      <button class="link" id="signout">Sign out</button>
+    </div>
+    <div class="row">
+      <div>
+        <div class="lab">Earn button on pages</div>
+        <div class="sub">Show the floating widget while you browse</div>
+      </div>
+      <span class="sw" id="sw" role="switch" aria-label="Show Earn button on pages" tabindex="0"><i></i></span>
+    </div>
+    <button class="btn green" id="dash">
+      <span class="gi" aria-hidden="true">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      </span>
+      Open dashboard
+    </button>
+    <div class="hint">Click the <b>Earn</b> button on any page and your widget pops out, floating on top. Bigger widget = higher-paying ads.</div>
   </div>
 
   <script src="auth.js"></script>
