@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="dashboard.css">
 </head>
-<body>
+<body class="booting">
   <canvas data-silk aria-hidden="true"></canvas>
   <div class="background-wash" aria-hidden="true"></div>
   <div class="orb orb-one" aria-hidden="true"></div>
@@ -99,6 +99,19 @@
           <span class="soft-note">Your balance syncs here</span>
         </div>
 
+        <button class="launch-card" id="launch-widget" type="button">
+          <span class="launch-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 3l14 9-14 9V3z" fill="currentColor"/></svg>
+          </span>
+          <span class="launch-copy">
+            <strong>Launch earning widget</strong>
+            <span>Open the widget right here in your browser and start banking — no install needed.</span>
+          </span>
+          <span class="launch-go" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-5-5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </button>
+
         <div class="action-grid">
           <a class="action-card desktop-card" href="index.html#download">
             <span class="action-icon">
@@ -155,7 +168,7 @@
       <div class="modal-icon" aria-hidden="true">$</div>
       <span class="eyebrow">Get paid</span>
       <h2 id="cashout-title">Cash out your balance</h2>
-      <p class="modal-sub">Choose where the money should go. Requests are typically reviewed within 1–3 business days.</p>
+      <p class="modal-sub">Choose where the money should go. Requests are reviewed before payouts are sent.</p>
 
       <form id="cashout-form" novalidate>
         <fieldset>

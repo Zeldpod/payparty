@@ -11,17 +11,6 @@ chrome.runtime.onInstalled.addListener(async () => {
   if (Object.keys(next).length) await chrome.storage.local.set(next);
 });
 
-// broadcast enabled/state changes to all tabs
-chrome.storage.onChanged.addListener((changes, area) => {
-  if (area !== 'local') return;
-  chrome.tabs.query({}, (tabs) => {
-    for (const t of tabs) {
-      if (!t.id) continue;
-      chrome.tabs.sendMessage(t.id, { type: 'pp:state', changes }).catch(() => {});
-    }
-  });
-});
-
 // open external links (sponsor offers) safely
 chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
   if (msg && msg.type === 'pp:open' && /^https?:\/\//i.test(msg.url || '')) {

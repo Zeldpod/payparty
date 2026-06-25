@@ -15,8 +15,21 @@
   if (window.top !== window) return;            // top frame only
   if (window.__payparty) return; window.__payparty = true;
 
-  var WIDGET_URL = 'https://www.payparty.fun/widget?host=ext';
+  var WIDGET_ORIGIN = 'https://www.payparty.fun';
+  var WIDGET_URL = WIDGET_ORIGIN + '/widget?host=ext';
   var pip = null;
+
+  // Build the widget URL, appending the signed-in access token so the widget
+  // earns REAL money via /api/earn. With no token it launches in estimate mode.
+  function widgetUrl() {
+    if (!alive()) return Promise.resolve(WIDGET_URL);
+    try {
+      return chrome.storage.local.get('session').then(function (s) {
+        var tok = s && s.session && s.session.access_token;
+        return tok ? WIDGET_URL + '&token=' + encodeURIComponent(tok) : WIDGET_URL;
+      }, function () { return WIDGET_URL; });
+    } catch (e) { return Promise.resolve(WIDGET_URL); }
+  }
 
   /* ---- launcher button (the extension's own branded UI, opt-in, NOT an ad) ---- */
   var host = document.createElement('div');
@@ -51,6 +64,8 @@
   async function launch() {
     if (pip && !pip.closed) { try { pip.focus(); } catch (e) {} return; }
     var W = 340, H = 480;
+    var url = await widgetUrl();
+    var signedIn = url !== WIDGET_URL; // token was appended
     try {
       if (window.documentPictureInPicture && documentPictureInPicture.requestWindow) {
         pip = await documentPictureInPicture.requestWindow({ width: W, height: H }); // always-on-top
@@ -58,24 +73,35 @@
         pip.document.documentElement.style.height = '100%';
         pip.document.body.style.cssText = 'margin:0;height:100%;background:transparent';
         var f = pip.document.createElement('iframe');
-        f.src = WIDGET_URL;
+        f.src = url;
         f.allow = 'autoplay';
         f.style.cssText = 'border:0;width:100%;height:100%;display:block';
         pip.document.body.appendChild(f);
-        pip.addEventListener('message', onEarn);
+        // In PiP the widget runs inside our iframe; it posts pp:earn to window.parent,
+        // which is the PiP window. Real balance is authoritative server-side, so we
+        // mirror only as a local estimate when signed out (no server credit happens).
+        if (!signedIn) pip.addEventListener('message', onEarn);
         pip.addEventListener('pagehide', cleanup);
       } else {
-        pip = window.open(WIDGET_URL, 'payparty_widget', 'popup,width=' + W + ',height=' + H); // fallback
+        // window.open fallback: the widget is a top-level page, not our iframe, so
+        // it cannot postMessage to us. The server (with ?token) keeps the real
+        // balance; the popup/dashboard read it from Supabase, so no mirror needed.
+        pip = window.open(url, 'payparty_widget', 'popup,width=' + W + ',height=' + H);
       }
     } catch (e) {
-      pip = window.open(WIDGET_URL, 'payparty_widget', 'popup,width=' + W + ',height=' + H);
+      pip = window.open(url, 'payparty_widget', 'popup,width=' + W + ',height=' + H);
     }
   }
-  function cleanup() { pip = null; }
+  function cleanup() {
+    try { if (pip) pip.removeEventListener('message', onEarn); } catch (e) {}
+    pip = null;
+  }
 
-  // mirror the widget's session counter into chrome.storage so the popup matches
+  // mirror the widget's ESTIMATED session counter into chrome.storage (signed-out
+  // only). Reject any message that isn't from our verified widget origin.
   function onEarn(e) {
-    if (!e || !e.data || e.data.type !== 'pp:earn' || !alive()) return;
+    if (!e || e.origin !== WIDGET_ORIGIN) return;
+    if (!e.data || e.data.type !== 'pp:earn' || !alive()) return;
     var a = Number(e.data.amount) || 0;
     if (a <= 0) return;
     try {

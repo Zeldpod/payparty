@@ -9,6 +9,7 @@
 
   const state = {
     client: null,
+    session: null,
     user: null,
     balance: 0,
     lifetime: 0,
@@ -29,6 +30,32 @@
   }).format(Number(value) || 0);
 
   const titleCase = (value) => String(value || '').replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+
+  const CANONICAL = 'https://www.payparty.fun';
+
+  function uuid() {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+    if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+      const bytes = crypto.getRandomValues(new Uint8Array(16));
+      bytes[6] = (bytes[6] & 0x0f) | 0x40;
+      bytes[8] = (bytes[8] & 0x3f) | 0x80;
+      const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0'));
+      return hex.slice(0, 4).join('') + '-' + hex.slice(4, 6).join('') + '-' +
+        hex.slice(6, 8).join('') + '-' + hex.slice(8, 10).join('') + '-' + hex.slice(10, 16).join('');
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = Math.random() * 16 | 0;
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+  }
+
+  // Robust redirect to the login page: strip the last path segment so it works
+  // with clean URLs (/dashboard) as well as explicit files (/dashboard.html).
+  function loginUrl() {
+    const path = location.pathname.replace(/[^/]*$/, '');
+    return location.origin + path + 'login.html';
+  }
+  const goToLogin = () => location.replace(loginUrl());
 
   function friendlyDate(value) {
     const date = new Date(value);
@@ -240,7 +267,7 @@
         id: 'preview-' + Date.now(), amount, method, status: 'pending', created_at: new Date().toISOString()
       });
     } else {
-      if (!state.requestKey) state.requestKey = crypto.randomUUID();
+      if (!state.requestKey) state.requestKey = uuid();
       const result = await state.client.rpc('request_cashout', {
         p_amount: amount,
         p_method: method,
@@ -262,6 +289,29 @@
     window.setTimeout(closeModal, 900);
   }
 
+  async function launchWidget() {
+    if (isPreview) {
+      window.open(CANONICAL + '/widget?host=web', 'payparty-widget', 'width=420,height=640');
+      return;
+    }
+    let token = state.session && state.session.access_token;
+    // Prefer a freshly validated session so the widget never gets an expired token.
+    if (state.client) {
+      const result = await state.client.auth.getSession();
+      const session = result.data && result.data.session;
+      if (session) {
+        state.session = session;
+        token = session.access_token;
+      }
+    }
+    if (!token) {
+      showToast('Please sign in again to launch the widget.');
+      return;
+    }
+    const url = CANONICAL + '/widget?host=web&token=' + encodeURIComponent(token);
+    window.open(url, 'payparty-widget', 'width=420,height=640,menubar=no,toolbar=no,location=no');
+  }
+
   let toastTimer;
   function showToast(message) {
     const toast = $('#toast');
@@ -274,7 +324,7 @@
   function bindEvents() {
     $('#logout').addEventListener('click', async () => {
       if (!isPreview && state.client) await state.client.auth.signOut();
-      location.replace('login.html');
+      goToLogin();
     });
     $('#open-cashout').addEventListener('click', openModal);
     $('#close-cashout').addEventListener('click', closeModal);
@@ -292,6 +342,12 @@
     });
     $('#cashout-form').addEventListener('submit', submitCashout);
     $('#refresh').addEventListener('click', () => loadData({ spin: true }));
+    const launch = $('#launch-widget');
+    if (launch) launch.addEventListener('click', launchWidget);
+  }
+
+  function reveal() {
+    document.body.classList.remove('booting');
   }
 
   async function boot() {
@@ -299,13 +355,14 @@
     if (isPreview) {
       state.user = { email: 'alex@payparty.fun', user_metadata: { name: 'Alex' } };
       setAccount(state.user);
+      reveal();
       await loadData();
       return;
     }
 
     const key = window.PAYPARTY_SUPABASE_ANON_KEY || '';
     if (!window.supabase || !window.supabase.createClient || !key || key.startsWith('PASTE_')) {
-      location.replace('login.html');
+      goToLogin();
       return;
     }
 
@@ -315,13 +372,18 @@
     const sessionResult = await state.client.auth.getSession();
     const session = sessionResult.data && sessionResult.data.session;
     if (!session) {
-      location.replace('login.html');
+      goToLogin();
       return;
     }
+    state.session = session;
     state.user = session.user;
     setAccount(state.user);
+    reveal();
     await loadData();
   }
 
-  boot().catch(() => showToast('Something went wrong loading the dashboard. Refresh to try again.'));
+  boot().catch(() => {
+    reveal();
+    showToast('Something went wrong loading the dashboard. Refresh to try again.');
+  });
 })();

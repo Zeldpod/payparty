@@ -119,7 +119,10 @@
     const $ = (s) => document.querySelector(s);
     const msg = $('#msg');
     let mode = 'signup';
-    const REDIRECT = location.origin + (location.pathname.replace(/login\.html$/, '') || '/') + 'dashboard.html';
+    // Robust base path: strip the last path segment so this works with clean
+    // URLs (/login) as well as explicit files (/login.html).
+    const BASE = location.origin + location.pathname.replace(/[^/]*$/, '');
+    const REDIRECT = BASE + 'dashboard.html';
     function setMsg(text, kind){ msg.textContent = text || ''; msg.className = 'msg' + (kind ? ' ' + kind : ''); }
 
     // guard: library + config present?

@@ -26,17 +26,21 @@
   .ad-slot{display:flex;align-items:center;justify-content:center;width:100%;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.06)}
   .ad-slot iframe{border:0;display:block;max-width:100%}
   #ad-native{width:100%}
-  .fallback{position:absolute;inset:54px 12px 96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-    border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));color:#cbbcff;font-size:12px;font-weight:600;pointer-events:none;z-index:0}
-  .fallback .sp{width:34px;height:34px;border-radius:50%;border:3px solid rgba(203,188,255,.25);border-top-color:#cbbcff;animation:spin 1s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
+  .fallback{position:absolute;inset:54px 12px 96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;
+    border-radius:14px;background:linear-gradient(155deg,rgba(150,116,255,.9),rgba(74,42,150,.95) 60%,rgba(20,12,48,.96));
+    color:#fff;font-weight:700;pointer-events:none;z-index:0;box-shadow:0 8px 26px rgba(20,8,60,.4) inset,0 0 0 1px rgba(255,255,255,.1) inset}
+  .fallback .fb-badge{font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#cbbcff;
+    background:rgba(255,255,255,.12);padding:3px 9px;border-radius:99px}
+  .fallback .fb-title{font-size:16px;font-weight:900;letter-spacing:-.01em}
+  .fallback .fb-sub{font-size:11px;font-weight:600;color:#e2dbff;opacity:.9}
   .creative.has-ad .fallback{display:none}
   .cta{margin:10px 14px 0;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:14px;font-weight:800;font-size:13.5px;color:#04210d;cursor:pointer;border:none;
     background:linear-gradient(150deg,#1be06a,#00C853);box-shadow:0 8px 20px rgba(0,200,83,.4);-webkit-app-region:no-drag}
   .cta:hover{filter:brightness(1.06)}
   .cta:active{transform:translateY(1px)}
-  .foot{display:flex;align-items:center;justify-content:space-between;padding:9px 14px 12px;font-size:11px;color:#cbbcff}
-  .earn{font-weight:800;color:#fff}
+  .foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 14px 12px;font-size:11px;color:#cbbcff}
+  .earn{font-weight:800;color:#fff;white-space:nowrap}
+  .signin{font-size:10px;font-weight:700;color:#7CFFB0;opacity:.92;text-align:right}
   .coin{position:absolute;left:50%;top:46px;transform:translateX(-50%);font-weight:900;font-size:15px;color:#7CFFB0;opacity:0;pointer-events:none;z-index:5}
   @keyframes ppcoin{0%{opacity:0;transform:translate(-50%,0) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(-50%,-46px) scale(1.1)}}
   [data-tier=compact] .head{padding-top:9px}
@@ -49,10 +53,10 @@
     <div class="creative" id="creative">
       <div class="ad-slot" id="ad-banner"></div>
       <div class="ad-slot" id="ad-native"></div>
-      <div class="fallback"><div class="sp"></div><span>Loading sponsor…</span></div>
+      <div class="fallback"><span class="fb-badge">Your ad here</span><span class="fb-title">PayParty Premium</span><span class="fb-sub">Sponsor this slot · reach earners</span></div>
     </div>
     <button class="cta" id="cta">View sponsor →</button>
-    <div class="foot"><span class="earn" id="earn">$0.00 today</span><span>Drag edge → grow 📈</span></div>
+    <div class="foot"><span class="earn" id="earn">$0.00 estimated</span><span class="signin" id="signin" style="display:none">Sign in to earn real money</span><span class="grow" id="grow">Drag edge → grow 📈</span></div>
     <div class="coin" id="coin">+$0.05</div>
   </div>
 
@@ -64,9 +68,9 @@
   // Each banner is a REAL same-origin page on payparty.fun (NOT srcdoc) so
   // Adsterra's invoke.js sees the verified hostname and actually fills.
   var BANNERS = {
-    compact:  { page: 'ad-320.html', w: 320, h: 50 },
-    standard: { page: 'ad-300.html', w: 300, h: 250 },
-    large:    { page: 'ad-300.html', w: 300, h: 250 }
+    compact:  { page: '/widget/ad-320.html', w: 320, h: 50 },
+    standard: { page: '/widget/ad-300.html', w: 300, h: 250 },
+    large:    { page: '/widget/ad-300.html', w: 300, h: 250 }
   };
   var SOCIALBAR_SRC = 'https://pl29853227.effectivecpmnetwork.com/59/05/f8/5905f8858a836a832aaa98f8ca6b0851.js';
   var RATE = { compact: 0.02, standard: 0.05, large: 0.15 };
@@ -79,6 +83,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var tier = null, socialLoaded = false, nativeLoaded = false;
 
+  function revealAd() { $('creative').classList.add('has-ad'); }
   function mountBanner(t) {
     var b = BANNERS[t] || BANNERS.standard;
     var slot = $('ad-banner');
@@ -89,15 +94,16 @@
     f.width = b.w; f.height = b.h;
     f.src = b.page;
     f.style.cssText = 'width:' + b.w + 'px;height:' + b.h + 'px';
+    // reveal the real ad on load; keep the timeout only as a backup
+    f.addEventListener('load', revealAd);
     slot.appendChild(f);
-    // reveal (hide the loader) shortly after the ad frame is in the DOM
-    setTimeout(function () { $('creative').classList.add('has-ad'); }, 1400);
+    setTimeout(revealAd, 2500);
   }
   function loadNative() {
     if (nativeLoaded || !RICH_OK) return; nativeLoaded = true;
     var f = document.createElement('iframe');
     f.title = 'Sponsored';
-    f.src = 'ad-native.html';
+    f.src = '/widget/ad-native.html';
     f.style.cssText = 'border:0;width:100%;height:250px;display:block;border-radius:14px';
     $('ad-native').appendChild(f);
   }
@@ -121,30 +127,67 @@
   var rt;
   window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(setTier, 250); });
 
-  // ---- "View sponsor" → Smartlink (paid on click) ----
-  $('cta').addEventListener('click', function () {
-    window.open(SMARTLINK, '_blank', 'noopener');
-    bump(RATE[tier] / 12 * 3);
-  });
+  // Pick the tier (and mount the ad) up front so `tier` is set before the very
+  // first earnings tick fires — otherwise the first /api/earn POST would send
+  // tier:null (rejected 400) and popCoin would render +$NaN.
+  setTier();
 
-  // ---- estimated session earnings (DISPLAY ONLY) ----
-  // Real cashable balance is credited server-side via verified ad postbacks.
-  function dayKey() { var d = new Date(); return 'pp_earn_' + d.getFullYear() + '_' + (d.getMonth() + 1) + '_' + d.getDate(); }
-  var earn = parseFloat(localStorage.getItem(dayKey()) || '0') || 0;
-  function paint() { $('earn').textContent = '$' + earn.toFixed(2) + ' today'; }
-  function bump(a) {
-    earn = Math.round((earn + a) * 100) / 100;
-    try { localStorage.setItem(dayKey(), String(earn)); } catch (e) {}
-    paint();
+  // ---- earnings ----
+  // signed in (?token=) -> credit REAL money via /api/earn and show the live balance
+  // signed out          -> show a clearly-labeled local "estimated" counter
+  var EARN_API = 'https://www.payparty.fun/api/earn';
+  var TOKEN = (new URLSearchParams(location.search).get('token') || '').trim();
+  // onClick reward: signed-out bumps the local estimate; signed-in just animates
+  // (the real cashable balance is credited server-side via /api/earn).
+  var onClickReward = function () { popCoin(RATE[tier] / 12 * 3); };
+
+  function popCoin(a) {
     var c = $('coin'); c.textContent = '+$' + a.toFixed(2);
     c.style.animation = 'none'; void c.offsetWidth; c.style.animation = 'ppcoin 1.5s ease-out';
     // let an embedding host (extension) mirror the counter in its popup
     try { if (window.parent && window.parent !== window) window.parent.postMessage({ type: 'pp:earn', amount: a }, '*'); } catch (e) {}
   }
-  paint();
-  setInterval(function () { bump(RATE[tier] / 12); }, 5000);
 
-  setTier();
+  // ---- "View sponsor" → Smartlink (paid on click) ----
+  $('cta').addEventListener('click', function () {
+    window.open(SMARTLINK, '_blank', 'noopener');
+    onClickReward();
+  });
+
+  if (TOKEN) {
+    // ---- REAL earnings: post verified seconds-watched, render server balance ----
+    var earnTick = function () {
+      fetch(EARN_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+        body: JSON.stringify({ seconds: 15, tier: tier })
+      }).then(function (r) { return r.json(); }).then(function (d) {
+        if (d && typeof d.balance === 'number') {
+          $('earn').textContent = '$' + d.balance.toFixed(2) + ' balance';
+          popCoin(RATE[tier] * 15 / 60);
+        }
+      }).catch(function () {});
+    };
+    $('earn').textContent = '$0.00 balance';
+    setInterval(earnTick, 15000);
+    earnTick();
+  } else {
+    // ---- estimated session earnings (DISPLAY ONLY, signed out) ----
+    var dayKey = function () { var d = new Date(); return 'pp_earn_' + d.getFullYear() + '_' + (d.getMonth() + 1) + '_' + d.getDate(); };
+    var earn = parseFloat(localStorage.getItem(dayKey()) || '0') || 0;
+    var paint = function () { $('earn').textContent = '$' + earn.toFixed(2) + ' estimated'; };
+    var bump = function (a) {
+      earn = Math.round((earn + a) * 100) / 100;
+      try { localStorage.setItem(dayKey(), String(earn)); } catch (e) {}
+      paint();
+      popCoin(a);
+    };
+    onClickReward = function () { bump(RATE[tier] / 12 * 3); };
+    $('signin').style.display = '';
+    $('grow').style.display = 'none';
+    paint();
+    setInterval(function () { bump(RATE[tier] / 12); }, 5000);
+  }
 })();
 </script>
 </body>

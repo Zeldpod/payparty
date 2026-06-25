@@ -21,15 +21,50 @@
   .sw.on i{left:23px}
   .btn{display:block;width:100%;margin-top:14px;padding:12px;border-radius:12px;text-align:center;font-weight:800;font-size:14px;cursor:pointer;border:none;
     color:#fff;background:linear-gradient(180deg,#a488ff,#5e34f0);box-shadow:0 10px 22px rgba(108,77,255,.4)}
+  .btn:disabled{opacity:.6;cursor:default}
+  .btn.ghost{background:#fff;color:var(--purple);border:1px solid var(--brd);box-shadow:none}
   .hint{margin-top:10px;font-size:11px;color:var(--ink-soft);text-align:center}
+  .who{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:12px;color:var(--ink-soft)}
+  .who .em{font-weight:700;color:var(--ink);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .link{background:none;border:none;color:var(--purple);font-weight:700;font-size:12px;cursor:pointer;padding:0}
+  .field{width:100%;margin-top:8px;padding:11px 12px;border-radius:11px;border:1px solid var(--brd);font-size:14px;font-family:inherit;background:#fff;color:var(--ink)}
+  .field:focus{outline:none;border-color:var(--purple-lt)}
+  .err{margin-top:8px;font-size:11.5px;color:#d23b3b;text-align:center;min-height:0}
+  .ok{margin-top:8px;font-size:11.5px;color:var(--green-dk);text-align:center}
+  .or{display:flex;align-items:center;gap:8px;margin:12px 0 2px;color:var(--ink-soft);font-size:11px}
+  .or::before,.or::after{content:"";flex:1;height:1px;background:var(--brd)}
+  .toggle{margin-top:10px;font-size:11.5px;color:var(--ink-soft);text-align:center}
+  .hidden{display:none}
 </style>
 </head>
 <body>
   <div class="top"><span class="mark">P</span><span class="name">PayParty</span></div>
-  <div class="bal"><div class="l">Balance</div><div class="a" id="bal">$0.00</div><div class="s" id="life">$0.00 all-time</div></div>
-  <div class="row"><span>Show "Earn" button on pages</span><span class="sw" id="sw"><i></i></span></div>
-  <button class="btn" id="dash">Open dashboard →</button>
-  <div class="hint">Click the <b>Earn</b> button on any page → your widget pops out, floating on top. Bigger = higher-paying ads 📈</div>
+
+  <!-- Signed-out: email/password auth (primary in-extension path) -->
+  <div id="auth" class="hidden">
+    <input class="field" id="email" type="email" autocomplete="email" placeholder="Email">
+    <input class="field" id="pass" type="password" autocomplete="current-password" placeholder="Password">
+    <div class="err" id="err"></div>
+    <button class="btn" id="primary">Sign in</button>
+    <div class="or">or</div>
+    <button class="btn ghost" id="google">Continue with Google</button>
+    <div class="toggle">
+      <span id="toggleTxt">New here?</span>
+      <button class="link" id="toggle">Create an account</button>
+    </div>
+    <div class="hint">Google sign-in opens <b>payparty.fun</b> in a new tab (web-login fallback). Email &amp; password works right here.</div>
+  </div>
+
+  <!-- Signed-in -->
+  <div id="app" class="hidden">
+    <div class="bal"><div class="l">Balance</div><div class="a" id="bal">$0.00</div><div class="s" id="life">$0.00 all-time</div></div>
+    <div class="who"><span class="em" id="who">—</span><button class="link" id="signout">Sign out</button></div>
+    <div class="row"><span>Show "Earn" button on pages</span><span class="sw" id="sw"><i></i></span></div>
+    <button class="btn" id="dash">Open dashboard →</button>
+    <div class="hint">Click the <b>Earn</b> button on any page → your widget pops out, floating on top. Bigger = higher-paying ads 📈</div>
+  </div>
+
+  <script src="auth.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

@@ -35,7 +35,7 @@
   <div class="wrap">
     <div class="top">
       <div class="brand"><span class="mark">P</span><span class="nm">PayParty</span></div>
-      <span class="pill" id="signin">Sign in to sync (soon)</span>
+      <span class="pill" id="signin">Sign in to sync</span>
     </div>
     <div class="bal">
       <div class="b1"></div>
@@ -53,8 +53,9 @@
         <div class="d"><span id="rate" style="font-weight:800;color:var(--green-dk);font-size:18px">$0.05/min</span><br>Tier: <span id="tier">standard</span> · bigger widget = more.</div>
       </div>
     </div>
-    <div class="note">Earnings are stored locally for now. <b>Connect your account</b> to sync across desktop, browser &amp; web — coming with Supabase login.</div>
+    <div class="note" id="note">Open the extension popup to <b>sign in</b> and sync your real balance across desktop, browser &amp; web.</div>
   </div>
+  <script src="auth.js"></script>
   <script src="dashboard.js"></script>
 </body>
 </html>

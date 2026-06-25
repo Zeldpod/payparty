@@ -44,20 +44,46 @@ function render(state) {
 $('#min').addEventListener('click', () => pp.minimize());
 $('#close').addEventListener('click', () => pp.close());
 
-/* ---- login ---- */
-document.querySelectorAll('[data-provider]').forEach(b => {
-  b.addEventListener('click', async () => {
-    render(await pp.login({ provider: b.dataset.provider }));
-    toast('Signed in — welcome to the party 🎉');
-  });
+/* ---- login / sign up (real Supabase email + password) ---- */
+let mode = 'signin'; // 'signin' | 'signup'
+function applyMode() {
+  const signup = mode === 'signup';
+  $('#login-label').textContent = signup ? 'Create account →' : 'Sign in →';
+  $('#auth-switch-text').textContent = signup ? 'Already have an account?' : 'New to PayParty?';
+  $('#auth-switch').textContent = signup ? 'Sign in' : 'Create an account';
+  $('#password').autocomplete = signup ? 'new-password' : 'current-password';
+}
+$('#auth-switch').addEventListener('click', (e) => {
+  e.preventDefault();
+  mode = mode === 'signin' ? 'signup' : 'signin';
+  applyMode();
 });
-$('#login-email').addEventListener('click', login);
-$('#email').addEventListener('keydown', (e) => { if (e.key === 'Enter') login(); });
-async function login() {
+applyMode();
+
+// Google is OAuth-only: fall back to the verified web login in the browser.
+$('#google-web').addEventListener('click', () => {
+  pp.openExternal('https://www.payparty.fun/login');
+  toast('Finish Google sign in in your browser');
+});
+
+$('#login-email').addEventListener('click', submitAuth);
+$('#email').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#password').focus(); });
+$('#password').addEventListener('keydown', (e) => { if (e.key === 'Enter') submitAuth(); });
+async function submitAuth() {
   const email = $('#email').value.trim();
+  const password = $('#password').value;
   if (!/.+@.+\..+/.test(email)) { toast('Enter a valid email'); return; }
-  render(await pp.login({ email, provider: 'email' }));
-  toast('Signed in — welcome to the party 🎉');
+  if (!password) { toast('Enter your password'); return; }
+  const btn = $('#login-email'); btn.disabled = true;
+  try {
+    const r = mode === 'signup'
+      ? await pp.signup({ email, password })
+      : await pp.login({ email, password });
+    if (!r.ok) { toast(r.reason || 'Something went wrong'); return; }
+    if (r.confirm) { toast('Check your email to confirm your account'); mode = 'signin'; applyMode(); return; }
+    render(r.state);
+    toast('Signed in — welcome to the party 🎉');
+  } finally { btn.disabled = false; }
 }
 
 /* ---- dashboard ---- */
@@ -67,11 +93,25 @@ $('#launch').addEventListener('click', async () => {
   if (s.widgetOpen) { render(await pp.closeWidget()); }
   else { render(await pp.launchWidget()); toast('Widget launched — drag it anywhere'); }
 });
+// keep the destination placeholder honest as the method changes
+$('#cashout-method').addEventListener('change', (e) => {
+  const ph = { paypal: 'PayPal email', venmo: 'Venmo @handle', cash_app: 'Cash App $cashtag' };
+  $('#cashout-dest').placeholder = ph[e.target.value] || 'Payout destination';
+});
 $('#cashout').addEventListener('click', async () => {
-  const r = await pp.cashOut();
-  toast(r.ok ? 'Cashing out ' + money(r.amount) + ' 💸' : r.reason);
+  const method = $('#cashout-method').value;
+  const destination = $('#cashout-dest').value.trim();
+  const btn = $('#cashout'); btn.disabled = true;
+  try {
+    const r = await pp.cashOut({ method, destination });
+    if (r.ok) { toast('Cashing out ' + money(r.amount) + ' 💸'); $('#cashout-dest').value = ''; }
+    else if (!r.openedWeb) { toast(r.reason); }
+    else { toast(r.reason); }
+  } finally { btn.disabled = false; }
 });
 
 /* ---- live updates ---- */
 pp.onUpdate(render);
 pp.getState().then(render);
+// dashboard regained focus → re-sync the real balance from Supabase
+window.addEventListener('focus', () => { pp.refreshProfile().then(render); });

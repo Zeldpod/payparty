@@ -17,3 +17,20 @@ $('#sw').addEventListener('click', async () => {
   const { enabled } = await chrome.storage.local.get('enabled');
   await chrome.storage.local.set({ enabled: !(enabled !== false) });
 });
+
+// Reflect Supabase sign-in state and pull the REAL balance when signed in.
+async function syncAuth() {
+  const sess = await PPAuth.getSession();
+  const signedIn = !!(sess && sess.access_token);
+  const pill = $('#signin');
+  const note = $('#note');
+  if (signedIn) {
+    pill.textContent = (sess.user && sess.user.email) || 'Signed in';
+    note.innerHTML = 'Synced to your PayParty account. Balance updates in real time across desktop, browser &amp; web.';
+    PPAuth.fetchBalance(); // writes balance/lifetime to storage → re-renders
+  } else {
+    pill.textContent = 'Sign in to sync';
+    note.innerHTML = 'Open the extension popup to <b>sign in</b> and sync your real balance across desktop, browser &amp; web.';
+  }
+}
+syncAuth();
