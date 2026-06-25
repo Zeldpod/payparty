@@ -75,7 +75,8 @@ img{max-width:100%;display:block}
 .eyebrow::before{content:"";width:18px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--purple-lt),var(--purple));opacity:.7}
 .head .eyebrow::before{display:none}
 .grad-text{background:linear-gradient(100deg,var(--purple-lt),var(--purple-dk));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.rotor{white-space:nowrap}
+/* word lives on its OWN line, single line always → typewriter never reflows the page */
+.rotor{display:inline-block;white-space:nowrap;vertical-align:top;min-height:.9em}
 .caret{display:inline-block;width:.05em;height:.74em;margin-left:.07em;border-radius:3px;background:var(--purple-dk);vertical-align:-.03em;animation:pp-blink 1.05s steps(1,end) infinite}
 @keyframes pp-blink{0%,50%{opacity:1}50.01%,100%{opacity:0}}
 
@@ -490,7 +491,7 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
         <span class="sticker" style="transform:rotate(2deg)">⚡ Cash out at $5</span>
       </div>
 
-      <h1 data-reveal>Get paid while<br>you<span class="rotor"> <span class="grad-text" data-type>do anything.</span><span class="caret" aria-hidden="true"></span></span></h1>
+      <h1 data-reveal>Get paid to<br><span class="rotor"><span class="grad-text" data-type>do anything.</span><span class="caret" aria-hidden="true"></span></span></h1>
 
       <p class="sub" data-reveal>Drop a tiny glassy widget on your desktop. It quietly earns
         <b style="color:var(--green-dk)">real money</b> while you game, watch, study, or work — you're
