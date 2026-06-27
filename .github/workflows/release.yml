@@ -35,6 +35,13 @@ jobs:
       - name: Build installer
         working-directory: desktop
         run: npx electron-builder ${{ matrix.flag }} --publish never
+        env:
+          # mac code-signing + notarization (ignored on win/linux runners)
+          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
       - name: Publish to GitHub Release
         uses: softprops/action-gh-release@v2
         with:

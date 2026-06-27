@@ -30,7 +30,12 @@
       "category": "public.app-category.finance",
       "icon": "build/icon.icns",
       "target": [{ "target": "dmg", "arch": "universal" }],
-      "artifactName": "PayParty-mac.${ext}"
+      "artifactName": "PayParty-mac.${ext}",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "notarize": true
     },
     "win": {
       "icon": "build/icon.ico",
