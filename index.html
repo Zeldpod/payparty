@@ -15,6 +15,8 @@
 <meta property="og:url" content="https://www.payparty.fun">
 <meta name="theme-color" content="#6C4DFF">
 <link rel="canonical" href="https://www.payparty.fun">
+<!-- Vercel Web Analytics (enable it in Vercel → Project → Analytics) -->
+<script defer src="/_vercel/insights/script.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Monda:wght@400;700&display=swap" rel="stylesheet">
@@ -493,9 +495,8 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
 
       <h1 data-reveal>Get paid to<br><span class="rotor"><span class="grad-text" data-type>do anything.</span><span class="caret" aria-hidden="true"></span></span></h1>
 
-      <p class="sub" data-reveal>Drop a tiny glassy widget on your desktop. It quietly earns
-        <b style="color:var(--green-dk)">real money</b> while you game, watch, study, or work — you're
-        already on your screen, so it might as well pay you. Cash out at $5; every payout is reviewed before it sends.</p>
+      <p class="sub" data-reveal>PayParty puts a tiny sponsored widget on your desktop while you game, watch, study, or work.
+        You control where it goes. <b style="color:var(--green-dk)">It earns while your screen is active.</b></p>
 
       <div class="hero-ctas" data-reveal>
         <a href="#download" class="btn btn-lg btn-mac" data-magnetic data-rain data-os-btn>
@@ -503,9 +504,11 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
           <span data-os-label>Get for Mac</span>
         </a>
         <span class="ext-wrap">
-          <a href="#download" class="btn btn-lg btn-ghost" id="get-ext">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/></svg> Get extension
-          </a>
+          <span class="btn btn-lg btn-ghost" id="get-ext" aria-disabled="true" title="Chrome extension is in review — coming soon" style="cursor:default">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" style="opacity:.7"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/></svg>
+            Extension
+            <span style="font-size:11px;font-weight:800;letter-spacing:.05em;color:#fff;background:linear-gradient(150deg,var(--pop-pink),#e0337a);padding:3px 9px;border-radius:99px;box-shadow:0 4px 10px rgba(255,77,141,.4)">SOON</span>
+          </span>
         </span>
       </div>
 
@@ -884,6 +887,13 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
     var ICON={Mac:APPLE,Windows:WIN,Linux:LINUX};
     document.querySelectorAll('[data-os-icon]').forEach(function(el){el.innerHTML=ICON[os]||APPLE;el.style.display='inline-flex';});
     document.querySelectorAll('[data-os-label]').forEach(function(el){el.textContent=(el.closest('.final')?'Download PayParty for ':'Get for ')+os;});
+    /* real installers (built by .github/workflows/release.yml, hosted on GitHub Releases) */
+    var REL='https://github.com/Zeldpod/payparty/releases/latest/download/';
+    var DL={Mac:REL+'PayParty-mac.dmg',Windows:REL+'PayParty-win.exe',Linux:REL+'PayParty-linux.AppImage'};
+    document.querySelectorAll('[data-os-btn]').forEach(function(el){
+      el.setAttribute('href',DL[os]||'https://github.com/Zeldpod/payparty/releases/latest');
+      el.setAttribute('rel','noopener');
+    });
   })();
 
   /* ---- typewriter word rotator under "Get paid to" ---- */

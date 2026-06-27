@@ -190,12 +190,12 @@
 
     <div class="balance">
       <div class="cap">
-        <span class="l">Session earnings</span>
+        <span class="l">Your balance</span>
         <span class="rate tnum" id="rate">$0.05/min</span>
       </div>
       <div class="amt">
         <span class="big tnum" id="earn">$0.00</span>
-        <span class="unit" id="earn-unit">estimated</span>
+        <span class="unit" id="earn-unit">balance</span>
       </div>
       <div class="meta">
         <div class="bar"><span id="goalbar"></span></div>
@@ -367,21 +367,13 @@
     setInterval(earnTick, 15000);
     earnTick();
   } else {
-    // ---- estimated session earnings (DISPLAY ONLY, signed out) ----
-    var dayKey = function () { var d = new Date(); return 'pp_earn_' + d.getFullYear() + '_' + (d.getMonth() + 1) + '_' + d.getDate(); };
-    var earn = parseFloat(localStorage.getItem(dayKey()) || '0') || 0;
-    var paint = function () { $('earn').textContent = '$' + earn.toFixed(2); $('earn-unit').textContent = 'estimated'; paintGoal(earn); };
-    var bump = function (a) {
-      earn = Math.round((earn + a) * 100) / 100;
-      try { localStorage.setItem(dayKey(), String(earn)); } catch (e) {}
-      paint();
-      popCoin(a);
-    };
-    onClickReward = function () { bump(RATE[tier] / 12 * 3); };
+    // ---- signed out: NO fake/estimated numbers. Real money needs an account. ----
+    $('earn').textContent = '$0.00';
+    $('earn-unit').textContent = 'sign in to earn';
+    paintGoal(0);
     $('signin').style.display = '';
     $('grow').style.display = 'none';
-    paint();
-    setInterval(function () { bump(RATE[tier] / 12); }, 5000);
+    onClickReward = function () {}; // nothing to credit until they sign in
   }
 })();
 </script>

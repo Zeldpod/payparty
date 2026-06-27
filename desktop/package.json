@@ -25,19 +25,23 @@
     "productName": "PayParty",
     "directories": { "output": "release" },
     "files": ["**/*", "!release/**"],
+    "publish": [{ "provider": "github", "owner": "Zeldpod", "repo": "payparty" }],
     "mac": {
       "category": "public.app-category.finance",
       "icon": "build/icon.icns",
-      "target": ["dmg", "zip"]
+      "target": [{ "target": "dmg", "arch": "universal" }],
+      "artifactName": "PayParty-mac.${ext}"
     },
     "win": {
       "icon": "build/icon.ico",
-      "target": ["nsis"]
+      "target": ["nsis"],
+      "artifactName": "PayParty-win.${ext}"
     },
     "linux": {
       "icon": "build/icon.png",
-      "target": ["AppImage", "deb"],
-      "category": "Office"
+      "target": ["AppImage"],
+      "category": "Office",
+      "artifactName": "PayParty-linux.${ext}"
     }
   }
 }
