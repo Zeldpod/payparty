@@ -309,4 +309,26 @@ revoke insert, update, delete, truncate, references, trigger
   on public.profiles, public.earnings_ledger, public.cashouts from authenticated;
 grant select on public.profiles, public.earnings_ledger, public.cashouts to authenticated;
 
+-- ---------------------------------------------------------------------------
+-- Waitlist (pre-launch email capture)
+-- Written only by api/waitlist.js with the service-role key. The email column
+-- is unique so the API can insert idempotently (duplicate signups are ignored,
+-- never an error). RLS is on with deliberately no client policies, so anon and
+-- authenticated clients can neither read nor write this table directly.
+-- ---------------------------------------------------------------------------
+create table if not exists public.waitlist (
+  id          uuid primary key default gen_random_uuid(),
+  email       text not null unique,
+  source      text,
+  created_at  timestamptz not null default now()
+);
+
+create index if not exists waitlist_created_idx
+  on public.waitlist (created_at desc);
+
+alter table public.waitlist enable row level security;
+
+-- No client insert/select policies: only the service-role API touches this table.
+revoke all on public.waitlist from anon, authenticated;
+
 commit;
