@@ -996,8 +996,12 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
   var layer=document.querySelector('[data-rainlayer]');
   document.querySelectorAll('[data-rain]').forEach(function(el){
     el.addEventListener('click',function(e){
+      var href=el.getAttribute('href')||'';
+      var isLink=/^https?:\/\//i.test(href);
       e.preventDefault();
-      if(reduce){location.hash='#download';return;}
+      // the coin rain is just flair — still fire the real download/navigation
+      if(isLink){setTimeout(function(){window.location.href=href;},80);}
+      if(reduce){if(!isLink)location.hash='#download';return;}
       var emojis=['💸','🤑','💵','🪙','💰','🥳'];
       for(var i=0;i<28;i++){(function(i){
         var b=document.createElement('b');b.textContent=emojis[i%emojis.length];
