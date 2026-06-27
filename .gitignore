@@ -27,7 +27,3 @@ serviceKey*
 
 # build artifacts
 payparty-extension.zip
-desktop/release/
-
-# CI workflow — add via GitHub web UI, or push with a workflow-scope PAT
-.github/workflows/

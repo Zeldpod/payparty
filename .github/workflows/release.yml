@@ -1,0 +1,48 @@
+name: Build & release desktop app
+
+# Push a version tag (e.g. v0.1.0) to build installers for all 3 platforms
+# and publish them to a GitHub Release. The website download buttons point at
+#   https://github.com/Zeldpod/payparty/releases/latest/download/PayParty-<os>.<ext>
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            flag: '--mac'
+          - os: windows-latest
+            flag: '--win'
+          - os: ubuntu-latest
+            flag: '--linux'
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        working-directory: desktop
+        run: npm install
+      - name: Build installer
+        working-directory: desktop
+        run: npx electron-builder ${{ matrix.flag }} --publish never
+      - name: Publish to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          fail_on_unmatched_files: false
+          files: |
+            desktop/release/PayParty-mac.dmg
+            desktop/release/PayParty-win.exe
+            desktop/release/PayParty-linux.AppImage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
