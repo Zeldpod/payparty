@@ -354,6 +354,25 @@ section{position:relative}
   background:#e7fbef;color:var(--green-dk)}
 .cell.feature .rate{background:rgba(255,255,255,.18);color:#fff}
 
+/* honest earnings estimate */
+.est{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:50px;align-items:stretch}
+.est .c{position:relative;overflow:hidden;text-align:center;padding:38px 26px;border-radius:var(--r-lg);background:#fff;border:1px solid var(--glass-brd);box-shadow:var(--sh-2);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}
+.est .c:hover{transform:translateY(-7px);box-shadow:var(--sh-3)}
+.est .c .use{font-size:12.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-faint)}
+.est .c .amt{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(38px,4.6vw,54px);letter-spacing:-.03em;line-height:1;margin-top:14px;color:var(--green-dk)}
+.est .c .amt span{font-size:18px;font-weight:700;color:var(--ink-faint)}
+.est .c .desc{margin-top:13px;font-size:15px;font-weight:600;color:var(--ink-soft)}
+.est .c.mid{color:#fff;border:none;background:linear-gradient(162deg,var(--purple-lt),var(--purple-dk));box-shadow:0 26px 60px rgba(90,53,255,.42);transform:scale(1.03)}
+.est .c.mid:hover{transform:translateY(-7px) scale(1.03)}
+.est .c.mid .use{color:rgba(255,255,255,.85)}
+.est .c.mid .amt{color:#fff}
+.est .c.mid .amt span{color:rgba(255,255,255,.82)}
+.est .c.mid .desc{color:#eadfff}
+.est .c .pop{position:absolute;top:14px;right:14px;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:99px;background:rgba(255,255,255,.2);color:#fff}
+.est-fine{margin-top:26px;text-align:center;font-size:13px;line-height:1.55;color:var(--ink-faint);max-width:640px;margin:26px auto 0}
+@media(max-width:760px){.est{grid-template-columns:1fr;gap:14px}.est .c.mid{transform:none}.est .c.mid:hover{transform:translateY(-7px)}}
+
 /* control */
 .control-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
 .panel{position:relative;border-radius:var(--r-lg);padding:22px;background:linear-gradient(165deg,rgba(255,255,255,.85),rgba(246,243,255,.7));
@@ -530,8 +549,9 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
 
       <h1 data-reveal>Earn while you<br><span class="rotor"><span class="grad-text" data-type>browse.</span><span class="caret" aria-hidden="true"></span></span></h1>
 
-      <p class="sub" data-reveal>PayParty is a Chrome extension that puts a tiny sponsored card in the corner of your browser and pays you while your screen is on.
-        You control where it goes. <b style="color:var(--green-dk)">It's launching soon — get in line first.</b></p>
+      <p class="sub" data-reveal>A tiny sponsored card sits in the corner of your browser and quietly pays you while your screen is on —
+        realistically <b style="color:var(--green-dk)">$15–25 a month</b> for time you're already spending. You decide where it goes.
+        <b>Launching soon — get in line.</b></p>
 
       <!-- PRIMARY CTA: waitlist email form (extension is the hero now) -->
       <div class="hero-ctas" data-reveal>
@@ -676,6 +696,36 @@ footer{padding:40px 0 60px;background:var(--bg-lav)}
         <p>Screen on, widget on. It keeps earning during the in-between moments.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ===== HONEST EARNINGS ESTIMATE ===== -->
+<section class="sec" id="earnings">
+  <div class="wrap">
+    <div class="head" data-reveal>
+      <div class="eyebrow" style="color:var(--green-dk)">real talk · no inflated numbers</div>
+      <h2>So… <span class="grad-text">how much?</span></h2>
+      <p>It won't replace your job — and we'd never pretend it does. It's found money for the screen time you're already spending. Roughly what to expect, by how often you keep it on:</p>
+    </div>
+    <div class="est">
+      <div class="c" data-reveal data-tilt>
+        <div class="use">A few hours a day</div>
+        <div class="amt">$5–10<span>/mo</span></div>
+        <div class="desc">☕ Coffee money</div>
+      </div>
+      <div class="c mid" data-reveal data-tilt>
+        <span class="pop">most people</span>
+        <div class="use">Most of your day</div>
+        <div class="amt">$15–25<span>/mo</span></div>
+        <div class="desc">🥪 A few lunches, on us</div>
+      </div>
+      <div class="c" data-reveal data-tilt>
+        <div class="use">Screen on all day</div>
+        <div class="amt">$30+<span>/mo</span></div>
+        <div class="desc">📺 Covers a streaming sub</div>
+      </div>
+    </div>
+    <p class="est-fine" data-reveal>Honest estimates, not promises. You earn a share of what sponsors pay to rent your screen corner, so it moves with your screen time and live sponsor demand. No fake totals, no “you have $2,000 waiting.” Cash out from just $5.</p>
   </div>
 </section>
 
